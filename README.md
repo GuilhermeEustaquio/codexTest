@@ -1,49 +1,79 @@
-# 🚀 Projeto Challenge - Central do Bem
+# Central do Bem - Sprint 03 Front-End
 
-Bem-vindo ao repositório do **Central do Bem**!  
-Este projeto foi desenvolvido para a parte de Front-End do projeto Central do Bem.
+## Nome do projeto
+**Central do Bem (SPA React + TypeScript)**
 
----
+## Descrição
+Projeto acadêmico da FIAP para modernizar a solução da Turma do Bem com arquitetura profissional de Front-End.
+A aplicação foi migrada de HTML/CSS/JS puro para **React + Vite + TypeScript**, mantendo a identidade visual e os conteúdos do projeto original.
 
-## 🔗 Link do Projeto
-Acesse o projeto no GitHub:  
-[🌐 Acessar Projeto](https://github.com/guilhermeeustaquio/Challenge)
+## Tecnologias utilizadas
+- React 19
+- Vite
+- TypeScript
+- React Router DOM
+- React Hook Form
+- TailwindCSS
 
----
+## Estrutura de pastas
+```bash
+src/
+  assets/
+    data.ts
+  components/
+    Header/
+    Footer/
+    Layout/
+    Button/
+    Card/
+  pages/
+    Home/
+    Sobre/
+    FAQ/
+    Contato/
+    Integrantes/
+    Solucao/
+  routes/
+  types/
+```
 
-## 👥 Equipe
+## Integrantes
+| Nome | RM | Turma | GitHub | LinkedIn |
+|---|---|---|---|---|
+| Guilherme Pinto Eustáquio | 566784 | 1TDSPS | https://github.com/GuilhermeEustaquio | https://www.linkedin.com/in/guilhermeeustaquio/ |
+| Caio Cantini Couto | 563452 | 1TDSPS | https://github.com/caioccouto | https://www.linkedin.com/in/caio-couto-44b849326/ |
+| Matheus Tavares da Silva | 566844 | 1TDSPS | https://github.com/manovares | https://www.linkedin.com/in/manovares/ |
 
-| Nome | RM | GitHub | LinkedIn |
-|------|----|--------|----------|
-| **Guilherme Eustaquio** | 566784 | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/guilhermeeustaquio) | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/guilhermeeustaquio) |
-| **Caio Couto** | 563452 | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/caioccouto) | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/caio-couto-44b849326) |
-| **Matheus Tavares** | 566844 | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/manovares) | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/manovares/) |
+## Como rodar o projeto
+```bash
+npm install
+npm run dev
+```
 
+Para gerar build de produção:
+```bash
+npm run build
+npm run preview
+```
 
----
+## Rotas da aplicação
+- `/home`
+- `/sobre`
+- `/faq`
+- `/contato`
+- `/integrantes`
+- `/solucao`
+- `/solucao/:id` (rota dinâmica)
 
-## 📝 Descrição
-Segue uma breve apresentação sobre o projeto:
+## Link do GitHub
+https://github.com/guilhermeeustaquio/Challenge
 
-### ❓ Problema apresentado pela empresa Turma do Bem
-O problema principal foi a **dificuldade de centralização dos canais de comunicação**, o que causou perda de informações essenciais, dificultando o cadastro e atendimento dos pacientes.
+## Imagens do projeto
+As imagens utilizadas estão na pasta `imagem/` herdada do projeto original, incluindo logos e fotos da equipe.
 
-### 💡 Nossa Solução
-Desenvolvemos uma **plataforma centralizada** que organiza os canais de comunicação e garante que todas as informações importantes dos pacientes fiquem registradas de forma segura e acessível, evitando perdas e retrabalho.
-
-### 🎯 Objetivo principal
-O objetivo do projeto é **facilitar a gestão de informações e comunicação entre equipe e pacientes**, melhorando a eficiência do atendimento e o fluxo de trabalho da empresa.
-
----
-
-## ⚡ Tecnologias Utilizadas na parte de Front-End
-- HTML e CSS  
-- Git e GitHub
-- JavaScript
-
----
-
-## 📌 Observações
-- Este repositório é destinado à avaliação do projeto.  
-
-
+Exemplos:
+- `imagem/logo-turma-do-bem.png`
+- `imagem/logocdb.png`
+- `imagem/eustaquio.PNG`
+- `imagem/caioperfil.jpeg`
+- `imagem/euperfil.jpg`

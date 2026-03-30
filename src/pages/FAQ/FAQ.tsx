@@ -28,32 +28,37 @@ export function FAQ() {
   const [aberta, setAberta] = useState<number | null>(null);
 
   return (
-    <>
-      <section className="page-hero">
-        <h1 className="highlight-title">FAQ Central do Bem</h1>
-        <p className="page-intro">
+    <div className="space-y-8">
+      <section className="text-center">
+        <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">FAQ Central do Bem</h1>
+        <p className="mx-auto mt-3 max-w-3xl text-sm text-slate-600 md:text-base">
           Conheça os detalhes do CRM Inteligente desenvolvido para a Turma do Bem. Reunimos as perguntas mais frequentes e explicamos
           como a solução transforma a rotina de atendimento e gestão.
         </p>
       </section>
 
-      <section className="faq-section">
+      <section className="space-y-4">
         {perguntas.map((item, indice) => {
           const abertaAtual = aberta === indice;
           return (
-            <article className={`faq-card ${abertaAtual ? 'is-open' : ''}`} key={item.pergunta}>
-              <div className="faq-question">
-                <img className="faq-avatar" src="/imagem/semfoto.png" alt="Ícone de pergunta" />
-                <button className="faq-toggle" type="button" aria-expanded={abertaAtual} onClick={() => setAberta(abertaAtual ? null : indice)}>
-                  <span className="faq-toggle-text">{item.pergunta}</span>
-                  <span className="faq-toggle-icon" aria-hidden="true" />
+            <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm" key={item.pergunta}>
+              <div className="flex items-center gap-3">
+                <img className="h-12 w-12 rounded-full object-cover ring-2 ring-slate-100" src="/imagem/semfoto.png" alt="Ícone de pergunta" />
+                <button
+                  className="flex w-full items-center justify-between gap-3 text-left"
+                  type="button"
+                  aria-expanded={abertaAtual}
+                  onClick={() => setAberta(abertaAtual ? null : indice)}
+                >
+                  <span className="text-sm font-semibold text-slate-800 md:text-base">{item.pergunta}</span>
+                  <span className="text-xl text-teal-700">{abertaAtual ? '−' : '+'}</span>
                 </button>
               </div>
               {abertaAtual && (
-                <div className="faq-answer">
-                  <img className="faq-avatar" src={item.foto} alt={item.nome} />
+                <div className="mt-4 flex items-start gap-3 border-t border-slate-100 pt-4">
+                  <img className="h-12 w-12 rounded-full object-cover ring-2 ring-teal-100" src={item.foto} alt={item.nome} />
                   <div>
-                    <p>{item.resposta}</p>
+                    <p className="text-sm text-slate-600 md:text-base">{item.resposta}</p>
                   </div>
                 </div>
               )}
@@ -61,6 +66,6 @@ export function FAQ() {
           );
         })}
       </section>
-    </>
+    </div>
   );
 }

@@ -2,56 +2,44 @@ import { Link } from 'react-router-dom';
 
 export function Footer() {
   return (
-    <footer className="footer">
-      <div className="footer-container">
-        <div className="footer-about">
-          <img src="/imagem/logo-turma-do-bem.png" alt="Turma do Bem" className="footer-logo" />
-          <p>Central do Bem – Plataforma interna desenvolvida para modernizar e integrar a comunicação da Turma do Bem.</p>
+    <footer className="mt-10 border-t border-emerald-900/20 bg-emerald-950 text-emerald-50">
+      <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-10 md:grid-cols-3 md:px-6">
+        <div className="space-y-3">
+          <img src="/imagem/logo-turma-do-bem.png" alt="Turma do Bem" className="h-12 w-auto" />
+          <p className="text-sm text-emerald-100/90">
+            Central do Bem – Plataforma interna desenvolvida para modernizar e integrar a comunicação da Turma do Bem.
+          </p>
         </div>
 
-        <div className="footer-links">
-          <h4>Navegação</h4>
-          <ul>
-            <li>
-              <Link to="/home">Home</Link>
-            </li>
-            <li>
-              <Link to="/integrantes">Quem Somos</Link>
-            </li>
-            <li>
-              <Link to="/sobre">Sobre o Projeto</Link>
-            </li>
-            <li>
-              <Link to="/faq">FAQ</Link>
-            </li>
-            <li>
-              <Link to="/contato">Contato</Link>
-            </li>
+        <div>
+          <h4 className="text-base font-bold text-amber-300">Navegação</h4>
+          <ul className="mt-3 space-y-2 text-sm">
+            <li><Link className="hover:text-amber-200" to="/home">Home</Link></li>
+            <li><Link className="hover:text-amber-200" to="/integrantes">Quem Somos</Link></li>
+            <li><Link className="hover:text-amber-200" to="/sobre">Sobre o Projeto</Link></li>
+            <li><Link className="hover:text-amber-200" to="/faq">FAQ</Link></li>
+            <li><Link className="hover:text-amber-200" to="/contato">Contato</Link></li>
           </ul>
         </div>
 
-        <div className="footer-contact">
-          <h4>Contato</h4>
-          <p>
-            Email Integrantes do Grupo:
+        <div className="space-y-3 text-sm">
+          <h4 className="text-base font-bold text-amber-300">Contato</h4>
+          <p className="space-y-1">
+            <span className="font-semibold">Email Integrantes do Grupo:</span>
             <br />
-            <a href="mailto:guilhermepeustaquio@gmail.com">guilhermepeustaquio@gmail.com</a>
-            <br />
-            <a href="mailto:caiocc2006@gmail.com">caiocc2006@gmail.com</a>
-            <br />
-            <a href="mailto:matheustavares1356@gmail.com">matheustavares1356@gmail.com</a>
+            <a className="hover:text-amber-200" href="mailto:guilhermepeustaquio@gmail.com">guilhermepeustaquio@gmail.com</a><br />
+            <a className="hover:text-amber-200" href="mailto:caiocc2006@gmail.com">caiocc2006@gmail.com</a><br />
+            <a className="hover:text-amber-200" href="mailto:matheustavares1356@gmail.com">matheustavares1356@gmail.com</a>
           </p>
           <p>
-            Conheça a TdB:
+            <span className="font-semibold">Conheça a TdB:</span>
             <br />
-            <a href="https://turmadobem.org.br/" target="_blank" rel="noreferrer">
-              www.turmadobem.org
-            </a>
+            <a className="hover:text-amber-200" href="https://turmadobem.org.br/" target="_blank" rel="noreferrer">www.turmadobem.org</a>
           </p>
         </div>
       </div>
 
-      <div className="footer-bottom">
+      <div className="border-t border-emerald-900/30 py-4 text-center text-xs text-emerald-200">
         <p>© 2025 Central do Bem. Projeto acadêmico - FIAP | Challenge Turma do Bem</p>
       </div>
     </footer>

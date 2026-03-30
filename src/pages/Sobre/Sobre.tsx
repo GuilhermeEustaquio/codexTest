@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import { Accordion } from '../../components/Accordion/Accordion';
+import { MetricCard } from '../../components/MetricCard/MetricCard';
+import { SectionHeader } from '../../components/SectionHeader/SectionHeader';
 
 const pilares = [
   {
@@ -15,6 +18,32 @@ const pilares = [
     titulo: 'Insights e aprendizado',
     texto:
       'Dashboards analíticos alimentam líderes com dados de desempenho, enquanto o chatbot oferece respostas consistentes baseadas em casos reais e protocolos atualizados.',
+  },
+];
+
+const indicadores = [
+  { valor: '82.000', label: 'jovens atendidos' },
+  { valor: '1.100', label: 'mulheres acolhidas' },
+  { valor: '18.000', label: 'dentistas voluntários' },
+  { valor: '23', label: 'países com atuação' },
+];
+
+const diferenciais = [
+  {
+    titulo: 'Comunicação unificada:',
+    texto: 'triagens, atendimentos e interações são conectados por meio de um hub que organiza demandas por urgência e tema.',
+  },
+  {
+    titulo: 'Base de conhecimento inteligente:',
+    texto: 'protocolos, documentos e históricos solucionados ficam disponíveis em buscas rápidas.',
+  },
+  {
+    titulo: 'Métricas em tempo real:',
+    texto: 'dashboards acompanhados por lideranças mostram atendimentos, tempo de resposta e projeções de demanda.',
+  },
+  {
+    titulo: 'Escalabilidade:',
+    texto: 'arquitetura pensada para expansão nacional e internacional, permitindo integrar novos parceiros com agilidade.',
   },
 ];
 
@@ -46,56 +75,31 @@ export function Sobre() {
             decisões estratégicas.
           </p>
           <ul className="space-y-2 text-sm text-slate-600 md:text-base">
-            <li><strong className="text-slate-800">Comunicação unificada:</strong> triagens, atendimentos e interações são conectados por meio de um hub que organiza demandas por urgência e tema.</li>
-            <li><strong className="text-slate-800">Base de conhecimento inteligente:</strong> protocolos, documentos e históricos solucionados ficam disponíveis em buscas rápidas.</li>
-            <li><strong className="text-slate-800">Métricas em tempo real:</strong> dashboards acompanhados por lideranças mostram atendimentos, tempo de resposta e projeções de demanda.</li>
-            <li><strong className="text-slate-800">Escalabilidade:</strong> arquitetura pensada para expansão nacional e internacional, permitindo integrar novos parceiros com agilidade.</li>
+            {diferenciais.map((item) => (
+              <li key={item.titulo}>
+                <strong className="text-slate-800">{item.titulo}</strong> {item.texto}
+              </li>
+            ))}
           </ul>
         </div>
       </section>
 
       <section className="space-y-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" aria-labelledby="pilares-title">
-        <header className="space-y-2 text-center">
-          <span className="text-xs font-semibold uppercase tracking-wider text-teal-700">Como funciona</span>
-          <h2 id="pilares-title" className="text-2xl font-bold text-slate-900">Pilares da Central do Bem</h2>
-        </header>
-
-        <div className="grid gap-3">
-          {pilares.map((item, index) => {
-            const expanded = ativo === index;
-            return (
-              <article className="rounded-2xl border border-slate-200 bg-slate-50" key={item.titulo}>
-                <button
-                  className="flex w-full items-center justify-between gap-2 px-4 py-3 text-left text-sm font-semibold text-slate-800 md:text-base"
-                  type="button"
-                  aria-expanded={expanded}
-                  onClick={() => setAtivo(index)}
-                >
-                  <span>{item.titulo}</span>
-                  <span className="text-lg text-teal-700">{expanded ? '−' : '+'}</span>
-                </button>
-                {expanded && (
-                  <div className="border-t border-slate-200 px-4 py-3 text-sm text-slate-600 md:text-base">
-                    <p>{item.texto}</p>
-                  </div>
-                )}
-              </article>
-            );
-          })}
-        </div>
+        <SectionHeader centered eyebrow="Como funciona" title="Pilares da Central do Bem" className="max-w-3xl" />
+        <Accordion
+          items={pilares.map((item) => ({
+            id: item.titulo,
+            title: item.titulo,
+            content: <p>{item.texto}</p>,
+          }))}
+          activeIndex={ativo}
+          onToggle={setAtivo}
+        />
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Indicadores consolidados">
-        {[
-          { valor: '82.000', label: 'jovens atendidos' },
-          { valor: '1.100', label: 'mulheres acolhidas' },
-          { valor: '18.000', label: 'dentistas voluntários' },
-          { valor: '23', label: 'países com atuação' },
-        ].map((item) => (
-          <article key={item.label} className="rounded-2xl border border-emerald-200 bg-gradient-to-b from-white to-emerald-50 p-5 text-center shadow-sm">
-            <strong className="text-3xl font-extrabold text-emerald-800">{item.valor}</strong>
-            <span className="mt-1 block text-sm text-emerald-900/80">{item.label}</span>
-          </article>
+        {indicadores.map((item) => (
+          <MetricCard key={item.label} value={item.valor} label={item.label} />
         ))}
       </section>
     </div>

@@ -1,116 +1,125 @@
-import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import type { ContactFormValues } from '../../types';
-import { Button } from '../../components/Button/Button';
-
-const CONTACT_DRAFT_KEY = 'centraldobem-contato-draft';
 
 export function Contato() {
   const {
     register,
     handleSubmit,
     reset,
-    watch,
     formState: { errors, isSubmitSuccessful },
-  } = useForm<ContactFormValues>({
-    defaultValues: {
-      nome: '',
-      email: '',
-      telefone: '',
-      mensagem: '',
-    },
-  });
-
-  const valores = watch();
-  const tamanhoMensagem = valores.mensagem?.length ?? 0;
-
-  useEffect(() => {
-    const draft = localStorage.getItem(CONTACT_DRAFT_KEY);
-    if (draft) {
-      reset(JSON.parse(draft) as ContactFormValues);
-    }
-  }, [reset]);
-
-  useEffect(() => {
-    localStorage.setItem(CONTACT_DRAFT_KEY, JSON.stringify(valores));
-  }, [valores]);
+  } = useForm<ContactFormValues>();
 
   const onSubmit = (data: ContactFormValues) => {
     console.log('Contato enviado:', data);
-    localStorage.removeItem(CONTACT_DRAFT_KEY);
     reset();
   };
 
   return (
-    <section className="space-y-6">
-      <h1 className="text-3xl font-bold text-dark">Contato</h1>
-      <p className="text-slate-700">Fale com a equipe da Central do Bem.</p>
+    <div className="contact-page">
+      <section className="contact-hero full-bleed" aria-labelledby="contact-title">
+        <div className="layout-wrapper contact-hero-content">
+          <span className="section-tag">Contato</span>
+          <h1 id="contact-title">Converse com a Central do Bem</h1>
+          <p>
+            Estamos disponíveis para apoiar voluntários, parceiros e beneficiários da Turma do Bem. Envie uma mensagem pelo formulário
+            ou escolha o canal que melhor funciona para você.
+          </p>
+        </div>
+      </section>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 rounded-2xl bg-white p-6 shadow ring-1 ring-slate-200">
-        <div>
-          <label className="mb-1 block text-sm font-semibold" htmlFor="nome">
-            Nome completo
-          </label>
-          <input
-            id="nome"
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-            {...register('nome', { required: 'Nome é obrigatório.' })}
-          />
-          {errors.nome && <p className="mt-1 text-sm text-red-600">{errors.nome.message}</p>}
+      <section className="contact-grid" id="contact-form">
+        <div className="contact-card">
+          <h2>Envie uma mensagem</h2>
+          <p>Compartilhe suas dúvidas, sugestões ou necessidades. Nossa equipe responde em até 2 dias úteis.</p>
+          <form className="contact-form" onSubmit={handleSubmit(onSubmit)}>
+            <div>
+              <label htmlFor="txtNome">Nome completo</label>
+              <input
+                type="text"
+                id="txtNome"
+                placeholder="Como devemos te chamar?"
+                {...register('nome', { required: 'Nome é obrigatório' })}
+              />
+              {errors.nome && <small>{errors.nome.message}</small>}
+            </div>
+
+            <div>
+              <label htmlFor="txtEmail">E-mail</label>
+              <input
+                type="email"
+                id="txtEmail"
+                placeholder="nome@email.com"
+                {...register('email', { required: 'E-mail é obrigatório' })}
+              />
+              {errors.email && <small>{errors.email.message}</small>}
+            </div>
+
+            <div>
+              <label htmlFor="telefone">Telefone</label>
+              <input type="tel" id="telefone" placeholder="(00) 00000-0000" {...register('telefone')} />
+            </div>
+
+            <div>
+              <label htmlFor="txtMsg">Mensagem</label>
+              <textarea id="txtMsg" placeholder="Conte como podemos ajudar" {...register('mensagem', { required: true })} />
+            </div>
+
+            <button type="submit" className="primary-button">
+              Enviar mensagem
+            </button>
+            {isSubmitSuccessful && <p>Mensagem enviada com sucesso!</p>}
+          </form>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <label className="mb-1 block text-sm font-semibold" htmlFor="email">
-              E-mail
-            </label>
-            <input
-              id="email"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-              {...register('email', {
-                required: 'E-mail é obrigatório.',
-                pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Informe um e-mail válido.' },
-              })}
-            />
-            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
+        <aside className="contact-info">
+          <h2>Outros canais</h2>
+          <p>Se preferir, você também pode falar com o time por e-mail ou explorar outros materiais da Turma do Bem.</p>
+
+          <div className="contact-list">
+            <div className="contact-item">
+              <div className="contact-badge">📧</div>
+              <div>
+                <strong>E-mail da equipe</strong>
+                <p>
+                  <a href="mailto:guilhermepeustaquio@gmail.com">guilhermepeustaquio@gmail.com</a>
+                  <br />
+                  <a href="mailto:caiocc2006@gmail.com">caiocc2006@gmail.com</a>
+                  <br />
+                  <a href="mailto:matheustavares1356@gmail.com">matheustavares1356@gmail.com</a>
+                </p>
+              </div>
+            </div>
+
+            <div className="contact-item">
+              <div className="contact-badge">🌐</div>
+              <div>
+                <strong>Conheça a Turma do Bem</strong>
+                <p>
+                  <a href="https://turmadobem.org.br/" target="_blank" rel="noreferrer">
+                    www.turmadobem.org.br
+                  </a>
+                </p>
+              </div>
+            </div>
+
+            <div className="contact-item">
+              <div className="contact-badge">⏰</div>
+              <div>
+                <strong>Horário de atendimento</strong>
+                <p>Segunda a sexta-feira, das 9h às 18h.</p>
+              </div>
+            </div>
+
+            <div className="contact-item">
+              <div className="contact-badge">🤝</div>
+              <div>
+                <strong>Parcerias e voluntariado</strong>
+                <p>Envie seu interesse pelo formulário e retornaremos com as próximas etapas.</p>
+              </div>
+            </div>
           </div>
-
-          <div>
-            <label className="mb-1 block text-sm font-semibold" htmlFor="telefone">
-              Telefone
-            </label>
-            <input
-              id="telefone"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-              {...register('telefone')}
-            />
-          </div>
-        </div>
-
-        <div>
-          <div className="mb-1 flex items-center justify-between">
-            <label className="block text-sm font-semibold" htmlFor="mensagem">
-              Mensagem
-            </label>
-            <span className="text-xs text-slate-500">{tamanhoMensagem}/500</span>
-          </div>
-          <textarea
-            id="mensagem"
-            maxLength={500}
-            className="min-h-24 w-full rounded-lg border border-slate-300 px-3 py-2 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
-            {...register('mensagem', { required: 'Mensagem é obrigatória.' })}
-          />
-          {errors.mensagem && <p className="mt-1 text-sm text-red-600">{errors.mensagem.message}</p>}
-        </div>
-
-        <div className="flex flex-wrap gap-3">
-          <Button type="submit">Enviar mensagem</Button>
-          <Button type="button" variant="outline" onClick={() => reset()}>
-            Limpar formulário
-          </Button>
-        </div>
-        {isSubmitSuccessful && <p className="text-sm font-semibold text-primary">Mensagem enviada com sucesso!</p>}
-      </form>
-    </section>
+        </aside>
+      </section>
+    </div>
   );
 }

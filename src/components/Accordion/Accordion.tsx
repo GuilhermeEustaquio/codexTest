@@ -21,21 +21,37 @@ export function Accordion({ items, activeIndex, onToggle, bordered = true }: Acc
         const isOpen = activeIndex === index;
 
         return (
-          <article className="rounded-2xl border border-slate-200 bg-slate-50" key={item.id}>
-            <div className="flex items-center gap-3 px-4 py-3">
-              {item.leading}
-              <button
-                className="flex w-full items-center justify-between gap-3 text-left text-sm font-semibold text-slate-800 md:text-base"
-                type="button"
-                aria-expanded={isOpen}
-                onClick={() => onToggle(index)}
-              >
+          <article
+            key={item.id}
+            className={`overflow-hidden rounded-2xl border transition-all duration-200 ${
+              isOpen
+                ? 'border-primary/30 bg-white shadow-sm shadow-primary/10'
+                : 'border-slate-200 bg-white hover:border-slate-300'
+            }`}
+          >
+            <button
+              className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left text-sm font-semibold text-slate-800 transition md:text-base"
+              type="button"
+              aria-expanded={isOpen}
+              onClick={() => onToggle(index)}
+            >
+              <span className="flex items-center gap-3">
+                {item.leading && <span className="shrink-0">{item.leading}</span>}
                 <span>{item.title}</span>
-                <span className="text-xl text-teal-700">{isOpen ? '−' : '+'}</span>
-              </button>
-            </div>
+              </span>
+              <span
+                className={`shrink-0 text-xl font-light text-primary transition-transform duration-200 ${
+                  isOpen ? 'rotate-45' : 'rotate-0'
+                }`}
+              >
+                +
+              </span>
+            </button>
+
             {isOpen && (
-              <div className={`${bordered ? 'border-t border-slate-200 ' : ''}px-4 py-3 text-sm text-slate-600 md:text-base`}>
+              <div
+                className={`${bordered ? 'border-t border-slate-100 ' : ''}px-5 pb-5 pt-3 text-sm text-slate-600 md:text-base`}
+              >
                 {item.content}
               </div>
             )}

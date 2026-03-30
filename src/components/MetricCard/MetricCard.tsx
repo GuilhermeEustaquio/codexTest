@@ -6,9 +6,9 @@ interface MetricCardProps {
 
 export function MetricCard({ value, label, className = '' }: MetricCardProps) {
   return (
-    <article className={`rounded-2xl border border-emerald-200 bg-gradient-to-b from-white to-emerald-50 p-5 text-center shadow-sm ${className}`.trim()}>
-      <strong className="text-3xl font-extrabold text-emerald-800">{value}</strong>
-      <span className="mt-1 block text-sm text-emerald-900/80">{label}</span>
+    <article className={`rounded-2xl border border-primary/20 bg-gradient-to-b from-white to-brand-50 p-5 text-center shadow-sm transition hover:shadow-md hover:border-primary/40 ${className}`.trim()}>
+      <strong className="text-3xl font-extrabold text-primary">{value}</strong>
+      <span className="mt-1 block text-sm text-slate-600">{label}</span>
     </article>
   );
 }

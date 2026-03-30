@@ -16,8 +16,8 @@ export function Contato() {
 
   return (
     <div className="space-y-8">
-      <section className="rounded-3xl bg-gradient-to-r from-cyan-700 to-emerald-700 p-8 text-white shadow-lg" aria-labelledby="contact-title">
-        <span className="inline-flex rounded-full border border-white/30 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-cyan-100">Contato</span>
+      <section className="rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-teal-800 p-8 text-white shadow-xl" aria-labelledby="contact-title">
+        <span className="inline-flex rounded-full border border-white/25 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-teal-300">Contato</span>
         <h1 id="contact-title" className="mt-2 text-3xl font-bold md:text-4xl">Converse com a Central do Bem</h1>
         <p className="mt-3 max-w-3xl text-sm text-cyan-50 md:text-base">
           Estamos disponíveis para apoiar voluntários, parceiros e beneficiários da Turma do Bem. Envie uma mensagem pelo formulário
@@ -32,27 +32,27 @@ export function Contato() {
           <form className="mt-5 space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-1">
               <label htmlFor="txtNome" className="text-sm font-semibold text-slate-800">Nome completo</label>
-              <input type="text" id="txtNome" placeholder="Como devemos te chamar?" className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-teal-600 focus:ring-2 focus:ring-teal-100" {...register('nome', { required: 'Nome é obrigatório' })} />
+              <input type="text" id="txtNome" placeholder="Como devemos te chamar?" className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20" {...register('nome', { required: 'Nome é obrigatório' })} />
               {errors.nome && <small className="text-xs text-rose-600">{errors.nome.message}</small>}
             </div>
 
             <div className="space-y-1">
               <label htmlFor="txtEmail" className="text-sm font-semibold text-slate-800">E-mail</label>
-              <input type="email" id="txtEmail" placeholder="nome@email.com" className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-teal-600 focus:ring-2 focus:ring-teal-100" {...register('email', { required: 'E-mail é obrigatório' })} />
+              <input type="email" id="txtEmail" placeholder="nome@email.com" className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20" {...register('email', { required: 'E-mail é obrigatório' })} />
               {errors.email && <small className="text-xs text-rose-600">{errors.email.message}</small>}
             </div>
 
             <div className="space-y-1">
               <label htmlFor="telefone" className="text-sm font-semibold text-slate-800">Telefone</label>
-              <input type="tel" id="telefone" placeholder="(00) 00000-0000" className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-teal-600 focus:ring-2 focus:ring-teal-100" {...register('telefone')} />
+              <input type="tel" id="telefone" placeholder="(00) 00000-0000" className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20" {...register('telefone')} />
             </div>
 
             <div className="space-y-1">
               <label htmlFor="txtMsg" className="text-sm font-semibold text-slate-800">Mensagem</label>
-              <textarea id="txtMsg" placeholder="Conte como podemos ajudar" rows={4} className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-teal-600 focus:ring-2 focus:ring-teal-100" {...register('mensagem', { required: true })} />
+              <textarea id="txtMsg" placeholder="Conte como podemos ajudar" rows={4} className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20" {...register('mensagem', { required: true })} />
             </div>
 
-            <button type="submit" className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-800">Enviar mensagem</button>
+            <button type="submit" className="rounded-2xl bg-primary px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700 hover:shadow-md active:scale-[0.97]">Enviar mensagem</button>
             {isSubmitSuccessful && <p className="text-sm font-medium text-emerald-700">Mensagem enviada com sucesso!</p>}
           </form>
         </div>
@@ -85,7 +85,7 @@ export function Contato() {
               { icon: '🤝', title: 'Parcerias e voluntariado', content: <p>Envie seu interesse pelo formulário e retornaremos com as próximas etapas.</p> },
             ].map((item) => (
               <div key={item.title} className="flex items-start gap-3 rounded-xl bg-slate-50 p-4 ring-1 ring-slate-200">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-100 text-lg">{item.icon}</div>
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-lg">{item.icon}</div>
                 <div className="text-sm text-slate-600">
                   <strong className="block text-slate-900">{item.title}</strong>
                   {item.content}

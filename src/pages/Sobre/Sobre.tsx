@@ -52,8 +52,8 @@ export function Sobre() {
 
   return (
     <div className="space-y-10">
-      <section className="overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-900 to-teal-700 p-8 text-white shadow-lg" aria-labelledby="about-title">
-        <span className="inline-flex rounded-full border border-white/25 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-amber-200">
+      <section className="overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-teal-900 p-8 text-white shadow-xl" aria-labelledby="about-title">
+        <span className="inline-flex rounded-full border border-white/25 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-teal-300">
           Nossa proposta
         </span>
         <h1 id="about-title" className="mt-3 text-3xl font-bold md:text-5xl">Sobre a Central do Bem</h1>
@@ -64,8 +64,8 @@ export function Sobre() {
       </section>
 
       <section className="grid gap-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:grid-cols-[0.7fr_1.3fr]" id="visao-geral" aria-labelledby="visao-title">
-        <div className="flex items-center justify-center rounded-2xl bg-emerald-50 p-6">
-          <img src="/imagem/logo-turma-do-bem.png" alt="Logotipo da Central do Bem" className="h-48 w-auto" />
+        <div className="flex items-center justify-center rounded-2xl bg-brand-50 p-6">
+          <img src="/imagem/logo-turma-do-bem.png" alt="Logotipo da Central do Bem" className="max-h-48 w-auto" />
         </div>
         <div className="space-y-4">
           <h2 id="visao-title" className="text-2xl font-bold text-slate-900">Visão geral da solução</h2>

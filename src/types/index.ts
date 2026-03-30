@@ -18,6 +18,11 @@ export interface SolutionItem {
   descricao: string;
   imagem: string;
   objetivo: string;
+  tag: string;
+  publicoAlvo: string;
+  funcionalidades: string[];
+  beneficios: string[];
+  tecnologias: string[];
 }
 
 export interface ContactFormValues {

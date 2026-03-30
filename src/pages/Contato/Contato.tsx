@@ -15,108 +15,83 @@ export function Contato() {
   };
 
   return (
-    <div className="contact-page">
-      <section className="contact-hero full-bleed" aria-labelledby="contact-title">
-        <div className="layout-wrapper contact-hero-content">
-          <span className="section-tag">Contato</span>
-          <h1 id="contact-title">Converse com a Central do Bem</h1>
-          <p>
-            Estamos disponíveis para apoiar voluntários, parceiros e beneficiários da Turma do Bem. Envie uma mensagem pelo formulário
-            ou escolha o canal que melhor funciona para você.
-          </p>
-        </div>
+    <div className="space-y-8">
+      <section className="rounded-3xl bg-gradient-to-r from-cyan-700 to-emerald-700 p-8 text-white shadow-lg" aria-labelledby="contact-title">
+        <span className="inline-flex rounded-full border border-white/30 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-cyan-100">Contato</span>
+        <h1 id="contact-title" className="mt-2 text-3xl font-bold md:text-4xl">Converse com a Central do Bem</h1>
+        <p className="mt-3 max-w-3xl text-sm text-cyan-50 md:text-base">
+          Estamos disponíveis para apoiar voluntários, parceiros e beneficiários da Turma do Bem. Envie uma mensagem pelo formulário
+          ou escolha o canal que melhor funciona para você.
+        </p>
       </section>
 
-      <section className="contact-grid" id="contact-form">
-        <div className="contact-card">
-          <h2>Envie uma mensagem</h2>
-          <p>Compartilhe suas dúvidas, sugestões ou necessidades. Nossa equipe responde em até 2 dias úteis.</p>
-          <form className="contact-form" onSubmit={handleSubmit(onSubmit)}>
-            <div>
-              <label htmlFor="txtNome">Nome completo</label>
-              <input
-                type="text"
-                id="txtNome"
-                placeholder="Como devemos te chamar?"
-                {...register('nome', { required: 'Nome é obrigatório' })}
-              />
-              {errors.nome && <small>{errors.nome.message}</small>}
+      <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]" id="contact-form">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="text-2xl font-bold text-slate-900">Envie uma mensagem</h2>
+          <p className="mt-2 text-sm text-slate-600">Compartilhe suas dúvidas, sugestões ou necessidades. Nossa equipe responde em até 2 dias úteis.</p>
+          <form className="mt-5 space-y-4" onSubmit={handleSubmit(onSubmit)}>
+            <div className="space-y-1">
+              <label htmlFor="txtNome" className="text-sm font-semibold text-slate-800">Nome completo</label>
+              <input type="text" id="txtNome" placeholder="Como devemos te chamar?" className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-teal-600 focus:ring-2 focus:ring-teal-100" {...register('nome', { required: 'Nome é obrigatório' })} />
+              {errors.nome && <small className="text-xs text-rose-600">{errors.nome.message}</small>}
             </div>
 
-            <div>
-              <label htmlFor="txtEmail">E-mail</label>
-              <input
-                type="email"
-                id="txtEmail"
-                placeholder="nome@email.com"
-                {...register('email', { required: 'E-mail é obrigatório' })}
-              />
-              {errors.email && <small>{errors.email.message}</small>}
+            <div className="space-y-1">
+              <label htmlFor="txtEmail" className="text-sm font-semibold text-slate-800">E-mail</label>
+              <input type="email" id="txtEmail" placeholder="nome@email.com" className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-teal-600 focus:ring-2 focus:ring-teal-100" {...register('email', { required: 'E-mail é obrigatório' })} />
+              {errors.email && <small className="text-xs text-rose-600">{errors.email.message}</small>}
             </div>
 
-            <div>
-              <label htmlFor="telefone">Telefone</label>
-              <input type="tel" id="telefone" placeholder="(00) 00000-0000" {...register('telefone')} />
+            <div className="space-y-1">
+              <label htmlFor="telefone" className="text-sm font-semibold text-slate-800">Telefone</label>
+              <input type="tel" id="telefone" placeholder="(00) 00000-0000" className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-teal-600 focus:ring-2 focus:ring-teal-100" {...register('telefone')} />
             </div>
 
-            <div>
-              <label htmlFor="txtMsg">Mensagem</label>
-              <textarea id="txtMsg" placeholder="Conte como podemos ajudar" {...register('mensagem', { required: true })} />
+            <div className="space-y-1">
+              <label htmlFor="txtMsg" className="text-sm font-semibold text-slate-800">Mensagem</label>
+              <textarea id="txtMsg" placeholder="Conte como podemos ajudar" rows={4} className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-teal-600 focus:ring-2 focus:ring-teal-100" {...register('mensagem', { required: true })} />
             </div>
 
-            <button type="submit" className="primary-button">
-              Enviar mensagem
-            </button>
-            {isSubmitSuccessful && <p>Mensagem enviada com sucesso!</p>}
+            <button type="submit" className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal-800">Enviar mensagem</button>
+            {isSubmitSuccessful && <p className="text-sm font-medium text-emerald-700">Mensagem enviada com sucesso!</p>}
           </form>
         </div>
 
-        <aside className="contact-info">
-          <h2>Outros canais</h2>
-          <p>Se preferir, você também pode falar com o time por e-mail ou explorar outros materiais da Turma do Bem.</p>
+        <aside className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="text-2xl font-bold text-slate-900">Outros canais</h2>
+          <p className="mt-2 text-sm text-slate-600">Se preferir, você também pode falar com o time por e-mail ou explorar outros materiais da Turma do Bem.</p>
 
-          <div className="contact-list">
-            <div className="contact-item">
-              <div className="contact-badge">📧</div>
-              <div>
-                <strong>E-mail da equipe</strong>
-                <p>
-                  <a href="mailto:guilhermepeustaquio@gmail.com">guilhermepeustaquio@gmail.com</a>
-                  <br />
-                  <a href="mailto:caiocc2006@gmail.com">caiocc2006@gmail.com</a>
-                  <br />
-                  <a href="mailto:matheustavares1356@gmail.com">matheustavares1356@gmail.com</a>
-                </p>
+          <div className="mt-5 space-y-4">
+            {[
+              {
+                icon: '📧',
+                title: 'E-mail da equipe',
+                content: (
+                  <>
+                    <a href="mailto:guilhermepeustaquio@gmail.com" className="block hover:text-teal-700">guilhermepeustaquio@gmail.com</a>
+                    <a href="mailto:caiocc2006@gmail.com" className="block hover:text-teal-700">caiocc2006@gmail.com</a>
+                    <a href="mailto:matheustavares1356@gmail.com" className="block hover:text-teal-700">matheustavares1356@gmail.com</a>
+                  </>
+                ),
+              },
+              {
+                icon: '🌐',
+                title: 'Conheça a Turma do Bem',
+                content: (
+                  <a href="https://turmadobem.org.br/" target="_blank" rel="noreferrer" className="hover:text-teal-700">www.turmadobem.org.br</a>
+                ),
+              },
+              { icon: '⏰', title: 'Horário de atendimento', content: <p>Segunda a sexta-feira, das 9h às 18h.</p> },
+              { icon: '🤝', title: 'Parcerias e voluntariado', content: <p>Envie seu interesse pelo formulário e retornaremos com as próximas etapas.</p> },
+            ].map((item) => (
+              <div key={item.title} className="flex items-start gap-3 rounded-xl bg-slate-50 p-4 ring-1 ring-slate-200">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-100 text-lg">{item.icon}</div>
+                <div className="text-sm text-slate-600">
+                  <strong className="block text-slate-900">{item.title}</strong>
+                  {item.content}
+                </div>
               </div>
-            </div>
-
-            <div className="contact-item">
-              <div className="contact-badge">🌐</div>
-              <div>
-                <strong>Conheça a Turma do Bem</strong>
-                <p>
-                  <a href="https://turmadobem.org.br/" target="_blank" rel="noreferrer">
-                    www.turmadobem.org.br
-                  </a>
-                </p>
-              </div>
-            </div>
-
-            <div className="contact-item">
-              <div className="contact-badge">⏰</div>
-              <div>
-                <strong>Horário de atendimento</strong>
-                <p>Segunda a sexta-feira, das 9h às 18h.</p>
-              </div>
-            </div>
-
-            <div className="contact-item">
-              <div className="contact-badge">🤝</div>
-              <div>
-                <strong>Parcerias e voluntariado</strong>
-                <p>Envie seu interesse pelo formulário e retornaremos com as próximas etapas.</p>
-              </div>
-            </div>
+            ))}
           </div>
         </aside>
       </section>

@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Accordion } from '../../components/Accordion/Accordion';
+import { SectionHeader } from '../../components/SectionHeader/SectionHeader';
 
 const perguntas = [
   {
@@ -29,42 +31,29 @@ export function FAQ() {
 
   return (
     <div className="space-y-8">
-      <section className="text-center">
-        <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">FAQ Central do Bem</h1>
-        <p className="mx-auto mt-3 max-w-3xl text-sm text-slate-600 md:text-base">
-          Conheça os detalhes do CRM Inteligente desenvolvido para a Turma do Bem. Reunimos as perguntas mais frequentes e explicamos
-          como a solução transforma a rotina de atendimento e gestão.
-        </p>
-      </section>
+      <SectionHeader
+        centered
+        title="FAQ Central do Bem"
+        description="Conheça os detalhes do CRM Inteligente desenvolvido para a Turma do Bem. Reunimos as perguntas mais frequentes e explicamos como a solução transforma a rotina de atendimento e gestão."
+      />
 
       <section className="space-y-4">
-        {perguntas.map((item, indice) => {
-          const abertaAtual = aberta === indice;
-          return (
-            <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm" key={item.pergunta}>
-              <div className="flex items-center gap-3">
-                <img className="h-12 w-12 rounded-full object-cover ring-2 ring-slate-100" src="/imagem/semfoto.png" alt="Ícone de pergunta" />
-                <button
-                  className="flex w-full items-center justify-between gap-3 text-left"
-                  type="button"
-                  aria-expanded={abertaAtual}
-                  onClick={() => setAberta(abertaAtual ? null : indice)}
-                >
-                  <span className="text-sm font-semibold text-slate-800 md:text-base">{item.pergunta}</span>
-                  <span className="text-xl text-teal-700">{abertaAtual ? '−' : '+'}</span>
-                </button>
+        <Accordion
+          items={perguntas.map((item) => ({
+            id: item.pergunta,
+            title: item.pergunta,
+            leading: <img className="h-12 w-12 rounded-full object-cover ring-2 ring-slate-100" src="/imagem/semfoto.png" alt="Ícone de pergunta" />,
+            content: (
+              <div className="flex items-start gap-3">
+                <img className="h-12 w-12 rounded-full object-cover ring-2 ring-teal-100" src={item.foto} alt={item.nome} />
+                <p>{item.resposta}</p>
               </div>
-              {abertaAtual && (
-                <div className="mt-4 flex items-start gap-3 border-t border-slate-100 pt-4">
-                  <img className="h-12 w-12 rounded-full object-cover ring-2 ring-teal-100" src={item.foto} alt={item.nome} />
-                  <div>
-                    <p className="text-sm text-slate-600 md:text-base">{item.resposta}</p>
-                  </div>
-                </div>
-              )}
-            </article>
-          );
-        })}
+            ),
+          }))}
+          activeIndex={aberta}
+          onToggle={(index) => setAberta(aberta === index ? null : index)}
+          bordered={false}
+        />
       </section>
     </div>
   );

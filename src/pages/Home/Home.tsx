@@ -1,14 +1,20 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { solutions } from '../../assets/data';
 import { Button } from '../../components/Button/Button';
 import { Card } from '../../components/Card/Card';
-import { solutions } from '../../assets/data';
+import { SectionHeader } from '../../components/SectionHeader/SectionHeader';
 
 const indicadores = [
   { titulo: 'Jovens atendidos', valor: 82000, descricao: 'Atendimentos gratuitos realizados em toda rede TdB.' },
   { titulo: 'Dentistas voluntários', valor: 18000, descricao: 'Profissionais ativos na jornada de cuidado.' },
   { titulo: 'Mulheres acolhidas', valor: 1100, descricao: 'Apolônias do Bem com apoio odontológico.' },
 ];
+
+const cardsImpacto = [
+  { chave: 'jovensImpactados', titulo: 'Jovens impactados', cor: 'text-primary' },
+  { chave: 'triagensMes', titulo: 'Triagens estimadas / mês', cor: 'text-secondary' },
+] as const;
 
 export function Home() {
   const navigate = useNavigate();
@@ -60,10 +66,7 @@ export function Home() {
 
       <section className="grid gap-5 rounded-2xl border border-slate-200 bg-white/95 p-6 shadow-sm lg:grid-cols-[1.2fr_0.8fr]">
         <div className="space-y-3">
-          <h2 className="text-2xl font-bold text-dark">Simulador de impacto social</h2>
-          <p className="text-sm text-slate-600">
-            Estime rapidamente o alcance do projeto com base em novos dentistas voluntários entrando na rede.
-          </p>
+          <SectionHeader title="Simulador de impacto social" description="Estime rapidamente o alcance do projeto com base em novos dentistas voluntários entrando na rede." />
           <label htmlFor="voluntarios" className="text-sm font-semibold text-dark">
             Novos voluntários por ciclo: <span className="text-primary">{novosVoluntarios}</span>
           </label>
@@ -79,20 +82,18 @@ export function Home() {
           />
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-          <article className="rounded-xl bg-slate-50 p-4 ring-1 ring-slate-200">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Jovens impactados</p>
-            <p className="mt-1 text-2xl font-bold text-primary">{estimativa.jovensImpactados.toLocaleString('pt-BR')}</p>
-          </article>
-          <article className="rounded-xl bg-slate-50 p-4 ring-1 ring-slate-200">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Triagens estimadas / mês</p>
-            <p className="mt-1 text-2xl font-bold text-secondary">{estimativa.triagensMes.toLocaleString('pt-BR')}</p>
-          </article>
+          {cardsImpacto.map((item) => (
+            <article key={item.chave} className="rounded-xl bg-slate-50 p-4 ring-1 ring-slate-200">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{item.titulo}</p>
+              <p className={`mt-1 text-2xl font-bold ${item.cor}`}>{estimativa[item.chave].toLocaleString('pt-BR')}</p>
+            </article>
+          ))}
         </div>
       </section>
 
       <section className="space-y-4">
         <div className="flex items-end justify-between gap-4">
-          <h2 className="text-2xl font-bold text-dark">Frentes de solução</h2>
+          <SectionHeader title="Frentes de solução" className="space-y-0" />
           <Button variant="outline" onClick={() => navigate('/solucao')}>
             Ver tudo
           </Button>

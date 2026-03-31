@@ -39,6 +39,7 @@ export const teamMembers: TeamMember[] = [
 export const solutions: SolutionItem[] = [
   {
     id: 'hub-comunicacao',
+    themeColor: 'orange',
     titulo: 'Hub Integrado de Comunicação',
     descricao:
       'Centraliza e-mails, mensagens e histórico de atendimento para eliminar ruídos e retrabalho entre voluntários, coordenadores e beneficiários.',
@@ -65,6 +66,7 @@ export const solutions: SolutionItem[] = [
   },
   {
     id: 'painel-inteligente',
+    themeColor: 'blue',
     titulo: 'Painel de Inteligência Operacional',
     descricao:
       'Mostra métricas em tempo real para apoiar decisões estratégicas, prever demanda e identificar gargalos na rede de atendimento.',
@@ -91,6 +93,7 @@ export const solutions: SolutionItem[] = [
   },
   {
     id: 'jornada-humanizada',
+    themeColor: 'green',
     titulo: 'Jornada de Atendimento Humanizada',
     descricao:
       'Fluxos digitais com triagem automatizada, acompanhamento contínuo e alertas inteligentes para acelerar o suporte odontológico.',

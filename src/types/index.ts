@@ -13,6 +13,7 @@ export interface TeamMember {
 }
 
 export interface SolutionItem {
+  themeColor: 'orange' | 'blue' | 'green';
   id: string;
   titulo: string;
   descricao: string;

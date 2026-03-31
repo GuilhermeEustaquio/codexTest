@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --solution-orange: #f97316;
+  --solution-blue: #3b82f6;
+  --solution-green: #22c55e;
+}
+
 @layer base {
   * {
     @apply box-border;
@@ -23,5 +29,27 @@
 
   a {
     @apply no-underline;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply border border-white/20 bg-glass-white shadow-glass backdrop-blur-glass;
+  }
+
+  .gradient-mesh {
+    @apply bg-gradient-mesh;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(1rem);
+    transition: opacity 600ms ease, transform 600ms ease;
+    will-change: opacity, transform;
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

@@ -41,17 +41,17 @@ export const solutions: SolutionItem[] = [
     id: 'hub-comunicacao',
     titulo: 'Hub Integrado de Comunicação',
     descricao:
-      'Centraliza e-mails, mensagens e histórico de atendimento para eliminar ruídos e retrabalho entre voluntários, coordenadores e beneficiários.',
+      'Centraliza e-mail, WhatsApp e telefone em um único fluxo conectado ao caso do paciente para eliminar ruídos e perda de contexto.',
     imagem: '/imagem/dentistas-voluntarios.png',
     objetivo:
       'Garantir visão 360º de cada caso para voluntários, coordenação e beneficiários.',
     tag: 'Comunicação',
     publicoAlvo: 'Dentistas voluntários, coordenadores regionais e beneficiários da rede TdB.',
     funcionalidades: [
-      'Caixa de entrada unificada para e-mail e mensagens internas',
+      'Caixa de entrada unificada para e-mail, WhatsApp e registros de chamadas telefônicas',
       'Histórico completo de interações por paciente',
       'Alertas automáticos para retornos e follow-ups pendentes',
-      'Encaminhamento inteligente de casos entre voluntários',
+      'Roteamento automático por tipo de demanda e nível de urgência',
       'Templates de resposta rápida para perguntas frequentes',
       'Exportação de histórico em PDF para prontuário',
     ],
@@ -93,14 +93,15 @@ export const solutions: SolutionItem[] = [
     id: 'jornada-humanizada',
     titulo: 'Jornada de Atendimento Humanizada',
     descricao:
-      'Fluxos digitais com triagem automatizada, acompanhamento contínuo e alertas inteligentes para acelerar o suporte odontológico.',
+      'Fluxos digitais com triagem automatizada, base de conhecimento inteligente e acompanhamento contínuo para acelerar o suporte odontológico.',
     imagem: '/imagem/mulheres-atendidas.png',
     objetivo:
       'Oferecer acolhimento contínuo do primeiro contato até a conclusão do tratamento.',
     tag: 'Atendimento',
     publicoAlvo: 'Jovens em vulnerabilidade, mulheres do programa Apolônia do Bem e voluntários cadastrados.',
     funcionalidades: [
-      'Triagem digital com questionário de anamnese simplificado',
+      'Chatbot 1: triagem completa do paciente com questionário guiado de anamnese',
+      'Chatbot 2: base de conhecimento inteligente com protocolos, documentos e casos resolvidos',
       'Fila de espera inteligente com priorização por urgência',
       'Notificações automáticas de confirmação e lembrete de consulta',
       'Registro de evolução do tratamento por fase',

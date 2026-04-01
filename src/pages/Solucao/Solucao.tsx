@@ -28,13 +28,36 @@ export function Solucao() {
       {/* Hero */}
       <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-secondary p-8 text-white shadow-lg md:p-10">
         <span className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-100">
-          Módulos da plataforma
+          CRM Inteligente TdB
         </span>
-        <h1 className="mt-2 text-3xl font-bold md:text-4xl">Nossas Soluções</h1>
+        <h1 className="mt-2 text-3xl font-bold md:text-4xl">Plataforma única para toda a operação</h1>
         <p className="mt-3 max-w-2xl text-cyan-50">
-          Três módulos integrados para cobrir toda a jornada — da comunicação ao cuidado humanizado,
-          passando pela inteligência operacional.
+          A solução foi desenhada para concentrar comunicação, triagem, acompanhamento e métricas em
+          um único ambiente interno da Turma do Bem.
         </p>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        {[
+          {
+            titulo: 'Comunicação fragmentada',
+            desc: 'Centralização de canais para manter histórico completo por paciente e evitar retrabalho.',
+          },
+          {
+            titulo: 'Perda de informações críticas',
+            desc: 'Dados de triagem, atendimento e evolução registrados automaticamente na mesma base.',
+          },
+          {
+            titulo: 'Ausência de métricas confiáveis',
+            desc: 'Painel analítico em tempo real com indicadores e relatórios executivos automáticos.',
+          },
+        ].map((dor) => (
+          <article key={dor.titulo} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wide text-primary">Dor crítica</p>
+            <h2 className="mt-1 text-base font-bold text-dark">{dor.titulo}</h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600">{dor.desc}</p>
+          </article>
+        ))}
       </div>
 
       {/* Filtros */}
@@ -143,6 +166,20 @@ export function Solucao() {
             Entrar em contato
           </Button>
         </div>
+      </div>
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <SectionHeader
+          title="Diferenciais da proposta"
+          description="Estrutura pensada para ONGs da saúde com escalabilidade internacional e inteligência contextual alimentada por dados reais."
+          className="[&_h2]:text-base [&_h2]:font-semibold [&_p]:text-sm"
+        />
+        <ul className="mt-4 grid gap-3 text-sm text-slate-600 sm:grid-cols-2">
+          <li className="rounded-xl bg-slate-50 p-4">Hub único com roteamento por demanda e urgência.</li>
+          <li className="rounded-xl bg-slate-50 p-4">Dois chatbots complementares: triagem completa e base de conhecimento.</li>
+          <li className="rounded-xl bg-slate-50 p-4">Dashboards executivos com atendimentos, SLA e projeções de demanda.</li>
+          <li className="rounded-xl bg-slate-50 p-4">Base tecnológica para sustentar crescimento da Turma do Bem.</li>
+        </ul>
       </div>
 
       {/* Guia de uso */}

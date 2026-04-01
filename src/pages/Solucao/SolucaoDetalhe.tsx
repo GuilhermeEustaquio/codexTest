@@ -87,6 +87,27 @@ export function SolucaoDetalhe() {
         </div>
       </div>
 
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+          Papel no CRM inteligente
+        </span>
+        <h2 className="mt-1 text-xl font-bold text-dark">Como este módulo se conecta ao ecossistema</h2>
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          <div className="rounded-xl bg-slate-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Entrada</p>
+            <p className="mt-1 text-sm text-slate-700">Capta dados e eventos operacionais em tempo real.</p>
+          </div>
+          <div className="rounded-xl bg-slate-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Processamento</p>
+            <p className="mt-1 text-sm text-slate-700">Organiza prioridades, histórico e contexto para ação rápida.</p>
+          </div>
+          <div className="rounded-xl bg-slate-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Saída</p>
+            <p className="mt-1 text-sm text-slate-700">Gera decisões, encaminhamentos e indicadores confiáveis.</p>
+          </div>
+        </div>
+      </section>
+
       {/* Demo interativa */}
       <SolucaoPreview solutionId={detalhe.id} />
 
@@ -109,6 +130,21 @@ export function SolucaoDetalhe() {
               </span>
               <p className="text-sm text-slate-700">{f}</p>
             </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <span className="text-xs font-semibold uppercase tracking-wider text-primary">Tecnologia</span>
+        <h2 className="mt-1 text-xl font-bold text-dark">Stack e integração</h2>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {detalhe.tecnologias.map((tech) => (
+            <span
+              key={tech}
+              className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-700"
+            >
+              {tech}
+            </span>
           ))}
         </div>
       </section>

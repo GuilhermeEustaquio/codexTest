@@ -312,11 +312,53 @@ function JornadaHumanizadaPreview() {
     tipoPaciente: '',
     urgencia: '',
   });
+  const [chatbotAtivo, setChatbotAtivo] = useState<'triagem' | 'conhecimento'>('triagem');
 
   const reiniciar = () => setState({ step: 1, tipoPaciente: '', urgencia: '' });
 
   return (
     <div className="space-y-5 p-5">
+      <div className="grid gap-2 sm:grid-cols-2">
+        <button
+          onClick={() => setChatbotAtivo('triagem')}
+          className={`rounded-xl border px-4 py-3 text-left transition ${
+            chatbotAtivo === 'triagem'
+              ? 'border-primary bg-primary/5'
+              : 'border-slate-200 bg-white hover:border-primary/50'
+          }`}
+        >
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Chatbot 1</p>
+          <p className="text-sm font-semibold text-slate-800">Triagem completa do paciente</p>
+        </button>
+        <button
+          onClick={() => setChatbotAtivo('conhecimento')}
+          className={`rounded-xl border px-4 py-3 text-left transition ${
+            chatbotAtivo === 'conhecimento'
+              ? 'border-primary bg-primary/5'
+              : 'border-slate-200 bg-white hover:border-primary/50'
+          }`}
+        >
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Chatbot 2</p>
+          <p className="text-sm font-semibold text-slate-800">Base de conhecimento inteligente</p>
+        </button>
+      </div>
+
+      {chatbotAtivo === 'conhecimento' && (
+        <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <p className="font-semibold text-slate-800">Consulta de protocolos e casos resolvidos</p>
+          <div className="rounded-xl bg-white p-3 text-sm text-slate-600 shadow-sm ring-1 ring-slate-100">
+            Busca: <strong>"fluxo para urgência odontológica em jovem"</strong>
+          </div>
+          <ul className="space-y-2 text-sm text-slate-700">
+            <li className="rounded-lg bg-white px-3 py-2 ring-1 ring-slate-100">📄 Protocolo: Encaminhamento prioritário em até 48h</li>
+            <li className="rounded-lg bg-white px-3 py-2 ring-1 ring-slate-100">🧠 Histórico: Caso #1832 resolvido com especialista parceiro</li>
+            <li className="rounded-lg bg-white px-3 py-2 ring-1 ring-slate-100">✅ Checklist: Documentos necessários para autorização</li>
+          </ul>
+        </div>
+      )}
+
+      {chatbotAtivo === 'triagem' && (
+      <>
       {/* Stepper */}
       <div className="flex items-center gap-2">
         {([1, 2, 3] as StepId[]).map((s, i) => (
@@ -421,6 +463,8 @@ function JornadaHumanizadaPreview() {
             Reiniciar triagem
           </button>
         </div>
+      )}
+      </>
       )}
     </div>
   );

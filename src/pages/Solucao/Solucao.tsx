@@ -61,20 +61,59 @@ export function Solucao() {
     <div className="space-y-10">
       <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-primary to-secondary p-8 text-white shadow-lg md:p-10">
         <span className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-100">
-          SOLUÇÃO ESTRATÉGICA
+          CRM Inteligente TdB
         </span>
-        <h1 className="mt-2 text-3xl font-bold md:text-4xl">CRM inteligente da Turma do Bem</h1>
-        <p className="mt-3 max-w-3xl text-cyan-50">
-          Uma plataforma interna desenhada para eliminar fragmentação, registrar toda a jornada de
-          atendimento e apoiar decisões com métricas confiáveis em tempo real.
+        <h1 className="mt-2 text-3xl font-bold md:text-4xl">Plataforma única para toda a operação</h1>
+        <p className="mt-3 max-w-2xl text-cyan-50">
+          A solução foi desenhada para concentrar comunicação, triagem, acompanhamento e métricas em
+          um único ambiente interno da Turma do Bem.
         </p>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {indicadores.map((item) => (
-            <div key={item.label} className="rounded-2xl bg-white/10 p-4 ring-1 ring-white/20 backdrop-blur-sm">
-              <p className="text-2xl font-black text-white">{item.value}</p>
-              <p className="text-xs uppercase tracking-wide text-cyan-100">{item.label}</p>
-            </div>
+      <div className="grid gap-4 md:grid-cols-3">
+        {[
+          {
+            titulo: 'Comunicação fragmentada',
+            desc: 'Centralização de canais para manter histórico completo por paciente e evitar retrabalho.',
+          },
+          {
+            titulo: 'Perda de informações críticas',
+            desc: 'Dados de triagem, atendimento e evolução registrados automaticamente na mesma base.',
+          },
+          {
+            titulo: 'Ausência de métricas confiáveis',
+            desc: 'Painel analítico em tempo real com indicadores e relatórios executivos automáticos.',
+          },
+        ].map((dor) => (
+          <article key={dor.titulo} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wide text-primary">Dor crítica</p>
+            <h2 className="mt-1 text-base font-bold text-dark">{dor.titulo}</h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600">{dor.desc}</p>
+          </article>
+        ))}
+      </div>
+
+      {/* Filtros */}
+      <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center">
+        <input
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+          className="flex-1 rounded-xl border border-slate-300 px-4 py-2.5 text-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+          placeholder="Buscar módulo por nome ou descrição..."
+          aria-label="Buscar módulo"
+        />
+        <div className="flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => setTagAtiva(tag)}
+              className={`rounded-full px-4 py-1.5 text-xs font-semibold transition ${
+                tagAtiva === tag
+                  ? 'bg-primary text-white shadow'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              {tag}
+            </button>
           ))}
         </div>
       </div>
@@ -229,6 +268,43 @@ export function Solucao() {
           >
             Solicitar apresentação
           </Button>
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <SectionHeader
+          title="Diferenciais da proposta"
+          description="Estrutura pensada para ONGs da saúde com escalabilidade internacional e inteligência contextual alimentada por dados reais."
+          className="[&_h2]:text-base [&_h2]:font-semibold [&_p]:text-sm"
+        />
+        <ul className="mt-4 grid gap-3 text-sm text-slate-600 sm:grid-cols-2">
+          <li className="rounded-xl bg-slate-50 p-4">Hub único com roteamento por demanda e urgência.</li>
+          <li className="rounded-xl bg-slate-50 p-4">Dois chatbots complementares: triagem completa e base de conhecimento.</li>
+          <li className="rounded-xl bg-slate-50 p-4">Dashboards executivos com atendimentos, SLA e projeções de demanda.</li>
+          <li className="rounded-xl bg-slate-50 p-4">Base tecnológica para sustentar crescimento da Turma do Bem.</li>
+        </ul>
+      </div>
+
+      {/* Guia de uso */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <SectionHeader
+          title="Como explorar os módulos"
+          description="Clique em qualquer módulo para ver a descrição completa, funcionalidades e uma demonstração interativa de como ele funciona na prática."
+          className="[&_h2]:text-base [&_h2]:font-semibold [&_p]:text-sm"
+        />
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          {[
+            { n: '1', txt: 'Escolha um módulo acima e clique em "Ver módulo completo"' },
+            { n: '2', txt: 'Leia a descrição, objetivo e funcionalidades disponíveis' },
+            { n: '3', txt: 'Experimente a demo interativa para ver como funciona na prática' },
+          ].map((step) => (
+            <div key={step.n} className="flex items-start gap-3 rounded-xl bg-slate-50 p-4">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                {step.n}
+              </span>
+              <p className="text-sm text-slate-600">{step.txt}</p>
+            </div>
+          ))}
         </div>
       </div>
     </div>

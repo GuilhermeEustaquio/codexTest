@@ -1,79 +1,142 @@
-# Central do Bem - Sprint 03 Front-End
+# 🚀 Projeto Challenge - Central do Bem
 
-## Nome do projeto
-**Central do Bem (SPA React + TypeScript)**
+Bem-vindo ao repositório do **Central do Bem**!  
+Este projeto foi desenvolvido para a parte de Front-End do projeto Central do Bem.
 
-## Descrição
-Projeto acadêmico da FIAP para modernizar a solução da Turma do Bem com arquitetura profissional de Front-End.
-A aplicação foi migrada de HTML/CSS/JS puro para **React + Vite + TypeScript**, mantendo a identidade visual e os conteúdos do projeto original.
+---
 
-## Tecnologias utilizadas
-- React 19
-- Vite
-- TypeScript
-- React Router DOM
-- React Hook Form
-- TailwindCSS
+## 🔗 Link do Projeto
+Acesse o projeto no GitHub:  
+[ Acessar Projeto](https://github.com/guilhermeeustaquio/Challenge)
 
-## Estrutura de pastas
+[Video no Youtube demonstrando o projeto](https://youtu.be/nRJ7Bidjgvg)
+
+
+---
+
+## 🚀 Como rodar o projeto
+
+Siga os passos abaixo para executar o projeto localmente:
+
+Link do tutorial de instalação do projeto: https://youtu.be/uJeUh0mtqgk
+
+### Clone o repositório
 ```bash
-src/
-  assets/
-    data.ts
-  components/
-    Header/
-    Footer/
-    Layout/
-    Button/
-    Card/
-  pages/
-    Home/
-    Sobre/
-    FAQ/
-    Contato/
-    Integrantes/
-    Solucao/
-  routes/
-  types/
+git clone https://github.com/guilhermeeustaquio/Challenge.git
+
 ```
 
-## Integrantes
-| Nome | RM | Turma | GitHub | LinkedIn |
-|---|---|---|---|---|
-| Guilherme Pinto Eustáquio | 566784 | 1TDSPS | https://github.com/GuilhermeEustaquio | https://www.linkedin.com/in/guilhermeeustaquio/ |
-| Caio Cantini Couto | 563452 | 1TDSPS | https://github.com/caioccouto | https://www.linkedin.com/in/caio-couto-44b849326/ |
-| Matheus Tavares da Silva | 566844 | 1TDSPS | https://github.com/manovares | https://www.linkedin.com/in/manovares/ |
+### Acesse a pasta do projeto
 
-## Como rodar o projeto
 ```bash
+
+cd Challenge
+
+```
+
+###  Instale as dependências
+
+```bash
+
 npm install
-npm run dev
+
 ```
 
-Para gerar build de produção:
+### Execute o projeto 
 ```bash
-npm run build
-npm run preview
+npm run dev
+
 ```
 
-## Rotas da aplicação
-- `/home`
-- `/sobre`
-- `/faq`
-- `/contato`
-- `/integrantes`
-- `/solucao`
-- `/solucao/:id` (rota dinâmica)
+### Abra o projeto no navegador
+Aparecerá um link semelhante ao link a seguir
 
-## Link do GitHub
-https://github.com/guilhermeeustaquio/Challenge
+Basta copiar e colar no navegador para visualizar o projeto
+```bash
+http://localhost:5173/
 
-## Imagens do projeto
-As imagens utilizadas estão na pasta `imagem/` herdada do projeto original, incluindo logos e fotos da equipe.
+```
 
-Exemplos:
-- `imagem/logo-turma-do-bem.png`
-- `imagem/logocdb.png`
-- `imagem/eustaquio.PNG`
-- `imagem/caioperfil.jpeg`
-- `imagem/euperfil.jpg`
+
+
+---
+
+## 👥 Equipe
+
+| Nome | RM | GitHub | LinkedIn |
+|------|----|--------|----------|
+| **Guilherme Eustaquio** | 566784 | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/guilhermeeustaquio) | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/guilhermeeustaquio) |
+| **Caio Couto** | 563452 | [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/caioccouto) | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/caio-couto-44b849326) |
+| **Matheus Tavares** | 566844 | [![GitHb](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/manovares) | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/manovares/) |
+
+
+---
+
+## 📝 Descrição
+Segue uma breve apresentação sobre o projeto:
+
+### ❓ Problema apresentado pela empresa Turma do Bem
+O problema principal foi a **dificuldade de centralização dos canais de comunicação**, o que causou perda de informações essenciais, dificultando o cadastro e atendimento dos pacientes.
+
+### 💡 Nossa Solução
+Desenvolvemos uma **plataforma centralizada** que organiza os canais de comunicação e garante que todas as informações importantes dos pacientes fiquem registradas de forma segura e acessível, evitando perdas e retrabalho.
+
+### 🎯 Objetivo principal
+O objetivo do projeto é **facilitar a gestão de informações e comunicação entre equipe e pacientes**, melhorando a eficiência do atendimento e o fluxo de trabalho da empresa.
+
+---
+
+## 📁 Estrutura de Pastas
+
+```
+Challenge/
+├── imagem/                     # Imagens estáticas do projeto
+│   ├── icon/                   # Ícones de navegação
+│   └── *.png / *.jpg           # Demais imagens
+├── public/                     # Arquivos públicos (favicon, ícones SVG)
+├── src/
+│   ├── assets/
+│   │   └── data.ts             # Dados estáticos da aplicação
+│   ├── components/             # Componentes reutilizáveis
+│   │   ├── Accordion/
+│   │   ├── Button/
+│   │   ├── Card/
+│   │   ├── Footer/
+│   │   ├── Header/
+│   │   ├── Layout/
+│   │   ├── MetricCard/
+│   │   └── SectionHeader/
+│   ├── pages/                  # Páginas da aplicação
+│   │   ├── Contato/
+│   │   ├── FAQ/
+│   │   ├── Home/
+│   │   ├── Integrantes/
+│   │   ├── Sobre/
+│   │   └── Solucao/
+│   ├── routes/
+│   │   └── AppRoutes.tsx       # Definição das rotas
+│   ├── types/
+│   │   └── index.ts            # Tipos TypeScript globais
+│   ├── App.tsx                 # Componente raiz
+│   ├── main.tsx                # Ponto de entrada
+│   └── index.css               # Estilos globais
+├── index.html
+├── vite.config.ts
+├── tailwind.config.js
+└── package.json
+```
+
+---
+
+## ⚡ Tecnologias Utilizadas na parte de Front-End
+- Vite
+- React
+- Git e GitHub
+- Typescript
+
+---
+
+## 📌 Observações
+- Este repositório é destinado à avaliação do projeto.  
+
+

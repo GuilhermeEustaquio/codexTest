@@ -31,3 +31,70 @@ export interface ContactFormValues {
   telefone?: string;
   mensagem: string;
 }
+
+export interface Beneficiario {
+  id?: number;
+  nome: string;
+  cpf: string;
+  idade: number;
+  telefone: string;
+  email: string;
+  status: 'AGUARDANDO_TRIAGEM' | 'EM_ATENDIMENTO' | 'FINALIZADO';
+}
+
+export interface Dentista {
+  id?: number;
+  nome: string;
+  cro: string;
+  especialidade: string;
+  telefone: string;
+  email: string;
+  disponivel: boolean;
+}
+
+export interface Doador {
+  id?: number;
+  nome: string;
+  cpfCnpj: string;
+  telefone: string;
+  email: string;
+  tipo: 'PESSOA_FISICA' | 'PESSOA_JURIDICA';
+}
+
+export interface Doacao {
+  id?: number;
+  doadorId: number;
+  valor: number;
+  data: string;
+  finalidade: string;
+}
+
+export interface Voluntario {
+  id?: number;
+  nome: string;
+  areaAtuacao: string;
+  telefone: string;
+  email: string;
+  ativo: boolean;
+}
+
+export interface Triagem {
+  id?: number;
+  beneficiarioId: number;
+  voluntarioId: number;
+  dataTriagem: string;
+  prioridade: 'BAIXA' | 'MEDIA' | 'ALTA';
+  observacao: string;
+  encaminhamento: string;
+}
+
+export interface DashboardResumo {
+  totalBeneficiarios: number;
+  totalDentistas: number;
+  totalVoluntarios: number;
+  totalDoadores: number;
+  totalDoacoes: number;
+  totalTriagens: number;
+  beneficiariosEmAtendimento: number;
+  beneficiariosAguardandoTriagem: number;
+}

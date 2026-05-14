@@ -188,3 +188,13 @@ npm run build
 ### Deploys
 - URL da Vercel: _preencher_
 - URL da API publicada: _preencher_
+
+## Sprint 4 - Área de Gestão da Solução
+- A página `/solucao` funciona como área de gestão principal.
+- Há abas para Beneficiários, Dentistas, Doadores, Doações, Voluntários e Triagens.
+- Cada aba permite listar, adicionar, atualizar e deletar registros.
+- Sem `VITE_API_URL`, o sistema usa mocks internos.
+- Com `VITE_API_URL`, o front fica preparado para consumir a API Java/Quarkus.
+- Não há login nesta versão.
+- Não há filtro por usuário.
+- Os dados representam tabelas específicas do backend Java.

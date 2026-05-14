@@ -98,3 +98,11 @@ export interface DashboardResumo {
   beneficiariosEmAtendimento: number;
   beneficiariosAguardandoTriagem: number;
 }
+
+
+export type BeneficiarioFormValues = Omit<Beneficiario, 'id'>;
+export type DentistaFormValues = Omit<Dentista, 'id'>;
+export type DoadorFormValues = Omit<Doador, 'id'>;
+export type DoacaoFormValues = Omit<Doacao, 'id'>;
+export type VoluntarioFormValues = Omit<Voluntario, 'id'>;
+export type TriagemFormValues = Omit<Triagem, 'id'>;

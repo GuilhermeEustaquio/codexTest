@@ -1,20 +1,23 @@
-import { apiDelete, apiGet, apiPost, apiPut, isApiEnabled } from './api';
 import { mockBeneficiarios } from '../mocks/mockData';
 import type { Beneficiario } from '../types';
+import { loadFromStorage, saveToStorage } from '../utils/storage';
+import { apiDelete, apiGet, apiPost, apiPut, isApiEnabled } from './api';
 
-let cache = [...mockBeneficiarios];
-const nextId = () => Math.max(0, ...cache.map((i) => i.id ?? 0)) + 1;
+const KEY = 'centraldobem_beneficiarios';
+const read = () => loadFromStorage<Beneficiario[]>(KEY, mockBeneficiarios);
+const write = (data: Beneficiario[]) => saveToStorage(KEY, data);
+const nextId = (items: Beneficiario[]) => Math.max(0, ...items.map((i) => i.id ?? 0)) + 1;
 
 export const beneficiarioService = {
-  listar: async (): Promise<Beneficiario[]> => (isApiEnabled() ? apiGet('/beneficiarios') : [...cache]),
-  buscarPorId: async (id: number): Promise<Beneficiario> => (isApiEnabled() ? apiGet(`/beneficiarios/${id}`) : cache.find((i) => i.id === id) as Beneficiario),
-  criar: async (payload: Beneficiario): Promise<Beneficiario> => {
-    if (isApiEnabled()) return apiPost('/beneficiarios', payload);
-    const created = { ...payload, id: nextId() }; cache = [...cache, created]; return created;
+  listar: async () => (isApiEnabled() ? apiGet<Beneficiario[]>('/beneficiarios') : read()),
+  buscarPorId: async (id: number) => (isApiEnabled() ? apiGet<Beneficiario>(`/beneficiarios/${id}`) : read().find((i) => i.id === id) as Beneficiario),
+  criar: async (payload: Beneficiario) => {
+    if (isApiEnabled()) return apiPost<Beneficiario, Beneficiario>('/beneficiarios', payload);
+    const items = read(); const created = { ...payload, id: nextId(items) }; write([...items, created]); return created;
   },
-  atualizar: async (id: number, payload: Beneficiario): Promise<Beneficiario> => {
-    if (isApiEnabled()) return apiPut(`/beneficiarios/${id}`, payload);
-    const updated = { ...payload, id }; cache = cache.map((i) => (i.id === id ? updated : i)); return updated;
+  atualizar: async (id: number, payload: Beneficiario) => {
+    if (isApiEnabled()) return apiPut<Beneficiario, Beneficiario>(`/beneficiarios/${id}`, payload);
+    const items = read(); const updated = { ...payload, id }; write(items.map((i) => (i.id === id ? updated : i))); return updated;
   },
-  remover: async (id: number): Promise<void> => { if (isApiEnabled()) return apiDelete(`/beneficiarios/${id}`); cache = cache.filter((i) => i.id !== id); },
+  remover: async (id: number) => { if (isApiEnabled()) return apiDelete(`/beneficiarios/${id}`); write(read().filter((i) => i.id !== id)); },
 };

@@ -8,7 +8,6 @@ import { FormInput } from '../../components/FormInput/FormInput';
 import { FormSelect } from '../../components/FormSelect/FormSelect';
 import { FormTextarea } from '../../components/FormTextarea/FormTextarea';
 import { StatusBadge } from '../../components/StatusBadge/StatusBadge';
-import { dashboardService } from '../../services/dashboardService';
 import { beneficiarioService } from '../../services/beneficiarioService';
 import { dentistaService } from '../../services/dentistaService';
 import { doacaoService } from '../../services/doacaoService';
@@ -16,14 +15,14 @@ import { doadorService } from '../../services/doadorService';
 import { triagemService } from '../../services/triagemService';
 import { voluntarioService } from '../../services/voluntarioService';
 import type { Beneficiario, DashboardResumo, Dentista, Doacao, Doador, Triagem, Voluntario } from '../../types';
+import { resetStorageKey } from '../../utils/storage';
 
 type TabKey = 'beneficiarios'|'dentistas'|'doadores'|'doacoes'|'voluntarios'|'triagens';
 type AnyEntity = Beneficiario | Dentista | Doador | Doacao | Voluntario | Triagem;
 
 export function Solucao() {
   const [tab, setTab] = useState<TabKey>('beneficiarios');
-  const [dashboard, setDashboard] = useState<DashboardResumo | null>(null);
-  const [busca, setBusca] = useState('');
+    const [busca, setBusca] = useState('');
   const [data, setData] = useState<Record<TabKey, AnyEntity[]>>({ beneficiarios:[], dentistas:[], doadores:[], doacoes:[], voluntarios:[], triagens:[] });
   const [openModal, setOpenModal] = useState(false);
   const [editing, setEditing] = useState<AnyEntity | null>(null);
@@ -33,10 +32,9 @@ export function Solucao() {
   const { register, handleSubmit, reset, formState: { errors } } = useForm<any>();
 
   useEffect(() => {
-    Promise.all([beneficiarioService.listar(), dentistaService.listar(), doadorService.listar(), doacaoService.listar(), voluntarioService.listar(), triagemService.listar(), dashboardService.resumo()])
-      .then(([beneficiarios, dentistas, doadores, doacoes, voluntarios, triagens, resumo]) => {
+    Promise.all([beneficiarioService.listar(), dentistaService.listar(), doadorService.listar(), doacaoService.listar(), voluntarioService.listar(), triagemService.listar()])
+      .then(([beneficiarios, dentistas, doadores, doacoes, voluntarios, triagens]) => {
         setData({ beneficiarios, dentistas, doadores, doacoes, voluntarios, triagens });
-        setDashboard(resumo);
       });
   }, []);
 
@@ -46,6 +44,24 @@ export function Solucao() {
   ] as const;
 
   const filtered = useMemo(() => data[tab].filter((item) => JSON.stringify(item).toLowerCase().includes(busca.toLowerCase())), [busca, data, tab]);
+  const dashboard: DashboardResumo = useMemo(() => ({
+    totalBeneficiarios: data.beneficiarios.length,
+    totalDentistas: data.dentistas.length,
+    totalDoadores: data.doadores.length,
+    totalDoacoes: data.doacoes.length,
+    totalVoluntarios: data.voluntarios.length,
+    totalTriagens: data.triagens.length,
+    beneficiariosAguardandoTriagem: data.beneficiarios.filter((b: any) => b.status === 'AGUARDANDO_TRIAGEM').length,
+    beneficiariosEmAtendimento: data.beneficiarios.filter((b: any) => b.status === 'EM_ATENDIMENTO').length,
+  }), [data]);
+
+  const restaurarDados = async () => {
+    ['centraldobem_beneficiarios','centraldobem_dentistas','centraldobem_doadores','centraldobem_doacoes','centraldobem_voluntarios','centraldobem_triagens'].forEach(resetStorageKey);
+    const [beneficiarios, dentistas, doadores, doacoes, voluntarios, triagens] = await Promise.all([beneficiarioService.listar(), dentistaService.listar(), doadorService.listar(), doacaoService.listar(), voluntarioService.listar(), triagemService.listar()]);
+    setData({ beneficiarios, dentistas, doadores, doacoes, voluntarios, triagens });
+    setMsg('Dados de exemplo restaurados com sucesso!');
+  };
+
 
   const onAdd = () => { setEditing(null); reset({}); setOpenModal(true); };
   const onEdit = (item: AnyEntity) => { setEditing(item); reset(item); setOpenModal(true); };
@@ -83,21 +99,21 @@ export function Solucao() {
       <p className='mt-2'>Gestão de beneficiários, dentistas, doadores, doações, voluntários e triagens, alinhada às tabelas do backend Java/Quarkus.</p>
     </section>
 
-    {dashboard && <section className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+    <section className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
       <DashboardCard title='Total de Beneficiários' value={dashboard.totalBeneficiarios} />
       <DashboardCard title='Total de Dentistas' value={dashboard.totalDentistas} />
       <DashboardCard title='Total de Doadores' value={dashboard.totalDoadores} />
       <DashboardCard title='Total de Doações' value={dashboard.totalDoacoes} />
       <DashboardCard title='Total de Voluntários' value={dashboard.totalVoluntarios} />
       <DashboardCard title='Total de Triagens' value={dashboard.totalTriagens} />
-    </section>}
+    </section>
 
     <CrudTabs tabs={tabs.map(t=>({key:t.key,label:t.label}))} active={tab} onChange={(k)=>setTab(k as TabKey)} />
 
     <section className='rounded-2xl border border-slate-200 bg-white p-5'>
       <div className='mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
         <input value={busca} onChange={(e)=>setBusca(e.target.value)} className='rounded-xl border px-3 py-2 text-sm' placeholder='Buscar por texto...' />
-        <button onClick={onAdd} className='rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white'>+ Adicionar {tabs.find(t=>t.key===tab)?.label.slice(0,-1)}</button>
+        <div className='flex gap-2'><button onClick={restaurarDados} className='rounded-xl border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-600'>Restaurar dados de exemplo</button><button onClick={onAdd} className='rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white'>+ Adicionar {tabs.find(t=>t.key===tab)?.label.slice(0,-1)}</button></div>
       </div>
       <div className='space-y-2'>
         {filtered.map((item:any)=><div key={item.id} className='flex flex-col gap-2 rounded-xl border p-3 sm:flex-row sm:items-center sm:justify-between'><div className='text-sm text-slate-700'><p className='font-semibold'>{item.nome ?? `Registro #${item.id}`}</p><p>{JSON.stringify(item)}</p>{item.status && <StatusBadge text={item.status} />}</div><div className='flex gap-2'><button onClick={()=>onEdit(item)} className='rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white'>Atualizar</button><button onClick={()=>setDeleteTarget(item)} className='rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white'>Deletar</button></div></div>)}

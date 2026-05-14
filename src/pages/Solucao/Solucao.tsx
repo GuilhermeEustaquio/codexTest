@@ -14,6 +14,7 @@ import { doacaoService } from '../../services/doacaoService';
 import { doadorService } from '../../services/doadorService';
 import { triagemService } from '../../services/triagemService';
 import { voluntarioService } from '../../services/voluntarioService';
+import { isApiEnabled } from '../../services/api';
 import type { Beneficiario, DashboardResumo, Dentista, Doacao, Doador, Triagem, Voluntario } from '../../types';
 import { resetStorageKey } from '../../utils/storage';
 
@@ -30,6 +31,7 @@ export function Solucao() {
   const [msg, setMsg] = useState('');
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<any>();
+  const apiAtiva = isApiEnabled();
 
   useEffect(() => {
     Promise.all([beneficiarioService.listar(), dentistaService.listar(), doadorService.listar(), doacaoService.listar(), voluntarioService.listar(), triagemService.listar()])
@@ -113,7 +115,7 @@ export function Solucao() {
     <section className='rounded-2xl border border-slate-200 bg-white p-5'>
       <div className='mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
         <input value={busca} onChange={(e)=>setBusca(e.target.value)} className='rounded-xl border px-3 py-2 text-sm' placeholder='Buscar por texto...' />
-        <div className='flex gap-2'><button onClick={restaurarDados} className='rounded-xl border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-600'>Restaurar dados de exemplo</button><button onClick={onAdd} className='rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white'>+ Adicionar {tabs.find(t=>t.key===tab)?.label.slice(0,-1)}</button></div>
+        <div className='flex gap-2'>{!apiAtiva && <button onClick={restaurarDados} className='rounded-xl border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-600'>Restaurar dados de exemplo</button>}<button onClick={onAdd} className='rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white'>+ Adicionar {tabs.find(t=>t.key===tab)?.label.slice(0,-1)}</button></div>
       </div>
       <div className='space-y-2'>
         {filtered.map((item:any)=><div key={item.id} className='flex flex-col gap-2 rounded-xl border p-3 sm:flex-row sm:items-center sm:justify-between'><div className='text-sm text-slate-700'><p className='font-semibold'>{item.nome ?? `Registro #${item.id}`}</p><p>{JSON.stringify(item)}</p>{item.status && <StatusBadge text={item.status} />}</div><div className='flex gap-2'><button onClick={()=>onEdit(item)} className='rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white'>Atualizar</button><button onClick={()=>setDeleteTarget(item)} className='rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white'>Deletar</button></div></div>)}

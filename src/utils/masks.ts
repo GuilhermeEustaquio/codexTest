@@ -65,3 +65,15 @@ export function isPhoneComplete(value: string): boolean {
   const len = digits(value).length;
   return len === 10 || len === 11;
 }
+
+/** CEP: 00000-000 */
+export function maskCep(value: string): string {
+  const d = digits(value).slice(0, 8);
+  if (d.length <= 5) return d;
+  return `${d.slice(0, 5)}-${d.slice(5)}`;
+}
+
+/** Validate CEP digit count (8 digits) */
+export function isCepComplete(value: string): boolean {
+  return digits(value).length === 8;
+}

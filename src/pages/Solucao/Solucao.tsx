@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { AddressSection } from '../../components/AddressSection/AddressSection';
 import { ConfirmDialog } from '../../components/ConfirmDialog/ConfirmDialog';
 import { CrudModal } from '../../components/CrudModal/CrudModal';
 import { CrudTabs } from '../../components/CrudTabs/CrudTabs';
 import { DashboardCard } from '../../components/DashboardCard/DashboardCard';
 import { FormInput } from '../../components/FormInput/FormInput';
 import { FormSelect } from '../../components/FormSelect/FormSelect';
-import { FormTextarea } from '../../components/FormTextarea/FormTextarea';
 import { MaskedInput } from '../../components/MaskedInput/MaskedInput';
 import { StatusBadge } from '../../components/StatusBadge/StatusBadge';
 import { beneficiarioService } from '../../services/beneficiarioService';
@@ -16,22 +16,27 @@ import { doadorService } from '../../services/doadorService';
 import { triagemService } from '../../services/triagemService';
 import { voluntarioService } from '../../services/voluntarioService';
 import { isApiEnabled } from '../../services/api';
-import type { Beneficiario, DashboardResumo, Dentista, Doacao, Doador, Triagem, Voluntario } from '../../types';
+import type {
+  Beneficiario, DashboardResumo, Dentista, Doacao, Doador, Triagem, Voluntario,
+} from '../../types';
 import { resetStorageKey } from '../../utils/storage';
-import { maskCpf, maskCpfCnpj, maskPhone, isCpfComplete, isCpfCnpjComplete, isPhoneComplete } from '../../utils/masks';
+import {
+  maskCpf, maskCpfCnpj, maskPhone,
+  isCpfComplete, isCpfCnpjComplete, isPhoneComplete,
+  digits,
+} from '../../utils/masks';
 
 type TabKey = 'beneficiarios' | 'dentistas' | 'doadores' | 'doacoes' | 'voluntarios' | 'triagens';
 type AnyEntity = Beneficiario | Dentista | Doador | Doacao | Voluntario | Triagem;
 
+// ── Entity list row ──────────────────────────────────────────────────────────
+
 function EntityRow({ tab, item }: { tab: TabKey; item: any }) {
   const label = (() => {
     switch (tab) {
-      case 'beneficiarios': return item.nome;
-      case 'dentistas': return item.nome;
-      case 'doadores': return item.nome;
-      case 'doacoes': return `Doação #${item.id ?? '—'} — Doador ID ${item.doadorId}`;
-      case 'voluntarios': return item.nome;
-      case 'triagens': return `Triagem #${item.id ?? '—'} — Benef. ID ${item.beneficiarioId}`;
+      case 'doacoes':  return `Doação #${item.id ?? '—'}`;
+      case 'triagens': return `Triagem #${item.id ?? '—'}`;
+      default:         return item.nome;
     }
   })();
 
@@ -40,62 +45,62 @@ function EntityRow({ tab, item }: { tab: TabKey; item: any }) {
       case 'beneficiarios':
         return (
           <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-500">
-            <span>CPF: {item.cpf}</span>
-            {item.idade && <span>Idade: {item.idade}</span>}
+            <span>CPF: {maskCpf(item.cpf ?? '')}</span>
+            {item.dtNasc && <span>Nasc: {item.dtNasc}</span>}
             <span>{item.email}</span>
-            <span>{item.telefone}</span>
+            <span>{maskPhone(item.telefone ?? '')}</span>
+            <span>{item.localidade}/{item.uf}</span>
           </div>
         );
       case 'dentistas':
         return (
           <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-500">
             <span>CRO: {item.cro}</span>
-            <span>{item.especialidade}</span>
+            <span>CPF: {maskCpf(item.cpf ?? '')}</span>
             <span>{item.email}</span>
-            <span>{item.telefone}</span>
+            <span>{item.localidade}/{item.uf}</span>
           </div>
         );
       case 'doadores':
         return (
           <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-500">
-            <span>CPF/CNPJ: {item.cpfCnpj}</span>
+            <span>Doc: {maskCpfCnpj(item.documanto ?? '')}</span>
             <span>{item.email}</span>
-            <span>{item.telefone}</span>
+            <span>{maskPhone(item.telefone ?? '')}</span>
+            <span>{item.localidade}/{item.uf}</span>
           </div>
         );
       case 'doacoes':
         return (
           <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-500">
+            <span>Doador ID: {item.idDoador}</span>
             <span>Valor: R$ {Number(item.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-            <span>Data: {item.data}</span>
-            <span>Finalidade: {item.finalidade}</span>
+            {item.descricao && <span>{item.descricao}</span>}
           </div>
         );
       case 'voluntarios':
         return (
           <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-500">
-            <span>Área: {item.areaAtuacao}</span>
+            <span>CRO: {item.cro}</span>
+            <span>CPF: {maskCpf(item.cpf ?? '')}</span>
             <span>{item.email}</span>
-            <span>{item.telefone}</span>
+            <span>{item.localidade}/{item.uf}</span>
           </div>
         );
       case 'triagens':
         return (
           <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-500">
-            <span>Voluntário ID: {item.voluntarioId}</span>
-            <span>Data: {item.dataTriagem}</span>
-            {item.encaminhamento && <span>Encam.: {item.encaminhamento}</span>}
+            <span>Benef. ID: {item.idBeneficiario}</span>
+            <span>Voluntário ID: {item.idVoluntario}</span>
+            <span>Início: {item.dataInicio}</span>
+            {item.dataFim && <span>Fim: {item.dataFim}</span>}
           </div>
         );
     }
   })();
 
   const badge = (() => {
-    if (item.status) return <StatusBadge text={item.status} />;
-    if (item.prioridade) return <StatusBadge text={item.prioridade} />;
-    if (tab === 'dentistas') return <StatusBadge text={item.disponivel === true || item.disponivel === 'true' ? 'DISPONIVEL' : 'INDISPONIVEL'} />;
-    if (tab === 'voluntarios') return <StatusBadge text={item.ativo === true || item.ativo === 'true' ? 'ATIVO' : 'INATIVO'} />;
-    if (tab === 'doadores') return <StatusBadge text={item.tipo} />;
+    if (item.resultado) return <StatusBadge text={item.resultado} />;
     return null;
   })();
 
@@ -126,6 +131,8 @@ function EntityRow({ tab, item }: { tab: TabKey; item: any }) {
   );
 }
 
+// ── Page ─────────────────────────────────────────────────────────────────────
+
 export function Solucao() {
   const [tab, setTab] = useState<TabKey>('beneficiarios');
   const [busca, setBusca] = useState('');
@@ -138,7 +145,7 @@ export function Solucao() {
   const [deleteTarget, setDeleteTarget] = useState<AnyEntity | null>(null);
   const [msg, setMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
-  const { register, handleSubmit, reset, control, formState: { errors, isSubmitting } } = useForm<any>();
+  const { register, handleSubmit, reset, control, setValue, formState: { errors, isSubmitting } } = useForm<any>();
   const apiAtiva = isApiEnabled();
 
   useEffect(() => {
@@ -165,11 +172,11 @@ export function Solucao() {
 
   const tabs = [
     { key: 'beneficiarios', label: 'Beneficiários' },
-    { key: 'dentistas', label: 'Dentistas' },
-    { key: 'doadores', label: 'Doadores' },
-    { key: 'doacoes', label: 'Doações' },
-    { key: 'voluntarios', label: 'Voluntários' },
-    { key: 'triagens', label: 'Triagens' },
+    { key: 'dentistas',     label: 'Dentistas' },
+    { key: 'doadores',      label: 'Doadores' },
+    { key: 'doacoes',       label: 'Doações' },
+    { key: 'voluntarios',   label: 'Voluntários' },
+    { key: 'triagens',      label: 'Triagens' },
   ] as const;
 
   const filtered = useMemo(
@@ -179,17 +186,17 @@ export function Solucao() {
 
   const dashboard: DashboardResumo = useMemo(() => ({
     totalBeneficiarios: data.beneficiarios.length,
-    totalDentistas: data.dentistas.length,
-    totalDoadores: data.doadores.length,
-    totalDoacoes: data.doacoes.length,
-    totalVoluntarios: data.voluntarios.length,
-    totalTriagens: data.triagens.length,
-    beneficiariosAguardandoTriagem: data.beneficiarios.filter((b: any) => b.status === 'AGUARDANDO_TRIAGEM').length,
-    beneficiariosEmAtendimento: data.beneficiarios.filter((b: any) => b.status === 'EM_ATENDIMENTO').length,
+    totalDentistas:     data.dentistas.length,
+    totalDoadores:      data.doadores.length,
+    totalDoacoes:       data.doacoes.length,
+    totalVoluntarios:   data.voluntarios.length,
+    totalTriagens:      data.triagens.length,
+    triagensEmAndamento: data.triagens.filter((t: any) => !t.dataFim).length,
   }), [data]);
 
   const restaurarDados = async () => {
-    ['centraldobem_beneficiarios', 'centraldobem_dentistas', 'centraldobem_doadores', 'centraldobem_doacoes', 'centraldobem_voluntarios', 'centraldobem_triagens'].forEach(resetStorageKey);
+    ['centraldobem_beneficiarios', 'centraldobem_dentistas', 'centraldobem_doadores',
+     'centraldobem_doacoes', 'centraldobem_voluntarios', 'centraldobem_triagens'].forEach(resetStorageKey);
     const [beneficiarios, dentistas, doadores, doacoes, voluntarios, triagens] = await Promise.all([
       beneficiarioService.listar(), dentistaService.listar(), doadorService.listar(),
       doacaoService.listar(), voluntarioService.listar(), triagemService.listar(),
@@ -201,9 +208,17 @@ export function Solucao() {
   const onAdd = () => { setEditing(null); reset({}); setOpenModal(true); };
   const onEdit = (item: AnyEntity) => { setEditing(item); reset(item); setOpenModal(true); };
 
-  // Expose handlers to EntityRow via window refs (avoids prop drilling through the component)
-  (window as any).__onEdit = onEdit;
+  (window as any).__onEdit   = onEdit;
   (window as any).__onDelete = (item: AnyEntity) => setDeleteTarget(item);
+
+  /** Strip masks from raw-digit fields before persisting */
+  const cleanForSave = (values: any): any => {
+    const out = { ...values };
+    for (const f of ['cpf', 'cep', 'telefone', 'documanto'] as const) {
+      if (f in out && typeof out[f] === 'string') out[f] = digits(out[f]);
+    }
+    return out;
+  };
 
   const save = async (values: any) => {
     const serviceMap: any = {
@@ -211,13 +226,14 @@ export function Solucao() {
       doacoes: doacaoService, voluntarios: voluntarioService, triagens: triagemService,
     };
     const service = serviceMap[tab];
+    const payload = cleanForSave(values);
     try {
       if (editing && 'id' in editing && editing.id) {
-        const updated = await service.atualizar(editing.id, { ...editing, ...values });
+        const updated = await service.atualizar(editing.id, { ...editing, ...payload });
         setData((p) => ({ ...p, [tab]: p[tab].map((x: any) => x.id === editing.id ? updated : x) }));
         setMsg({ text: 'Registro atualizado com sucesso!', type: 'success' });
       } else {
-        const created = await service.criar(values);
+        const created = await service.criar(payload);
         setData((p) => ({ ...p, [tab]: [...p[tab], created] }));
         setMsg({ text: 'Registro adicionado com sucesso!', type: 'success' });
       }
@@ -244,14 +260,16 @@ export function Solucao() {
   };
 
   const isEditing = Boolean(editing);
+
+  /** Fields locked when editing (primary identifiers) */
   const disabled = (field: string) =>
     isEditing && (
       (tab === 'beneficiarios' && ['nome', 'cpf'].includes(field)) ||
-      (tab === 'dentistas' && ['nome', 'cro'].includes(field)) ||
-      (tab === 'doadores' && ['nome', 'cpfCnpj'].includes(field)) ||
-      (tab === 'doacoes' && ['doadorId'].includes(field)) ||
-      (tab === 'voluntarios' && ['nome'].includes(field)) ||
-      (tab === 'triagens' && ['beneficiarioId'].includes(field))
+      (tab === 'dentistas'     && ['nome', 'cro', 'cpf'].includes(field)) ||
+      (tab === 'doadores'      && ['nome', 'documanto'].includes(field)) ||
+      (tab === 'voluntarios'   && ['nome', 'cro', 'cpf'].includes(field)) ||
+      (tab === 'doacoes'       && ['idDoador'].includes(field)) ||
+      (tab === 'triagens'      && ['idBeneficiario'].includes(field))
     );
 
   const currentTabLabel = tabs.find((t) => t.key === tab)?.label ?? '';
@@ -259,15 +277,9 @@ export function Solucao() {
 
   return (
     <div className="space-y-6">
-      {/* Toast notification */}
+      {/* Toast */}
       {msg && (
-        <div
-          className={`fixed bottom-5 right-5 z-[100] flex items-center gap-3 rounded-xl px-5 py-3 shadow-lg text-sm font-medium transition-all ${
-            msg.type === 'success'
-              ? 'bg-emerald-600 text-white'
-              : 'bg-rose-600 text-white'
-          }`}
-        >
+        <div className={`fixed bottom-5 right-5 z-[100] flex items-center gap-3 rounded-xl px-5 py-3 shadow-lg text-sm font-medium ${msg.type === 'success' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'}`}>
           <span>{msg.type === 'success' ? '✓' : '✕'}</span>
           {msg.text}
         </div>
@@ -288,22 +300,25 @@ export function Solucao() {
         )}
       </section>
 
-      {/* Dashboard Cards */}
+      {/* Dashboard */}
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <DashboardCard title="Beneficiários" value={dashboard.totalBeneficiarios} icon="👤" color="teal" />
-        <DashboardCard title="Dentistas" value={dashboard.totalDentistas} icon="🦷" color="cyan" />
-        <DashboardCard title="Doadores" value={dashboard.totalDoadores} icon="💚" color="green" />
-        <DashboardCard title="Doações" value={dashboard.totalDoacoes} icon="💰" color="emerald" />
-        <DashboardCard title="Voluntários" value={dashboard.totalVoluntarios} icon="🤝" color="teal" />
-        <DashboardCard title="Triagens" value={dashboard.totalTriagens} icon="📋" color="cyan" />
-        <DashboardCard title="Aguard. Triagem" value={dashboard.beneficiariosAguardandoTriagem} icon="⏳" color="amber" />
-        <DashboardCard title="Em Atendimento" value={dashboard.beneficiariosEmAtendimento} icon="⚕️" color="blue" />
+        <DashboardCard title="Beneficiários"      value={dashboard.totalBeneficiarios}    icon="👤" color="teal" />
+        <DashboardCard title="Dentistas"           value={dashboard.totalDentistas}         icon="🦷" color="cyan" />
+        <DashboardCard title="Doadores"            value={dashboard.totalDoadores}          icon="💚" color="green" />
+        <DashboardCard title="Doações"             value={dashboard.totalDoacoes}           icon="💰" color="emerald" />
+        <DashboardCard title="Voluntários"         value={dashboard.totalVoluntarios}       icon="🤝" color="teal" />
+        <DashboardCard title="Triagens"            value={dashboard.totalTriagens}          icon="📋" color="cyan" />
+        <DashboardCard title="Triagens em andamento" value={dashboard.triagensEmAndamento} icon="⏳" color="amber" />
       </section>
 
       {/* Tabs */}
-      <CrudTabs tabs={tabs.map((t) => ({ key: t.key, label: t.label }))} active={tab} onChange={(k) => { setTab(k as TabKey); setBusca(''); }} />
+      <CrudTabs
+        tabs={tabs.map((t) => ({ key: t.key, label: t.label }))}
+        active={tab}
+        onChange={(k) => { setTab(k as TabKey); setBusca(''); }}
+      />
 
-      {/* List section */}
+      {/* List */}
       <section className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="relative flex-1 sm:max-w-xs">
@@ -321,17 +336,11 @@ export function Solucao() {
           </div>
           <div className="flex gap-2">
             {!apiAtiva && (
-              <button
-                onClick={restaurarDados}
-                className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-100"
-              >
+              <button onClick={restaurarDados} className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-100">
                 Restaurar exemplos
               </button>
             )}
-            <button
-              onClick={onAdd}
-              className="flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700"
-            >
+            <button onClick={onAdd} className="flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-700">
               <span className="text-base leading-none">+</span>
               Adicionar {singularLabel}
             </button>
@@ -349,129 +358,233 @@ export function Solucao() {
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-2 py-12 text-slate-400">
             <svg viewBox="0 0 24 24" className="h-10 w-10 fill-current opacity-30" aria-hidden="true">
-              <path d="M19 11H7.83l4.88-4.88c.39-.39.39-1.03 0-1.42-.39-.39-1.02-.39-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L7.83 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" />
+              <path d="M20 6H4v2h16V6zm-2 5H6v2h12v-2zm-4 5H8v2h8v-2z" />
             </svg>
             <p className="text-sm font-medium">Nenhum registro encontrado</p>
             {busca && <p className="text-xs">Tente remover o filtro de busca</p>}
           </div>
         ) : (
           <div className="space-y-2">
-            {filtered.map((item: any) => (
-              <EntityRow key={item.id} tab={tab} item={item} />
-            ))}
+            {filtered.map((item: any) => <EntityRow key={item.id} tab={tab} item={item} />)}
           </div>
         )}
 
         {!loading && filtered.length > 0 && (
           <p className="mt-3 text-right text-xs text-slate-400">
-            {filtered.length} registro{filtered.length !== 1 ? 's' : ''}
-            {busca ? ` encontrado${filtered.length !== 1 ? 's' : ''}` : ''}
+            {filtered.length} registro{filtered.length !== 1 ? 's' : ''}{busca ? ' encontrado' + (filtered.length !== 1 ? 's' : '') : ''}
           </p>
         )}
       </section>
 
-      {/* CRUD Modal */}
+      {/* Modal */}
       <CrudModal
         open={openModal}
         onClose={() => setOpenModal(false)}
         title={`${isEditing ? 'Editar' : 'Adicionar'} ${singularLabel}`}
       >
         <form onSubmit={handleSubmit(save)} className="grid gap-3 md:grid-cols-2">
+
+          {/* ── BENEFICIÁRIOS ────────────────────────────────────────────── */}
           {tab === 'beneficiarios' && <>
-            <FormInput label="Nome completo" registration={register('nome', { required: 'Obrigatório' })} error={errors.nome} disabled={disabled('nome')} />
+            <FormInput
+              label="Nome completo"
+              registration={register('nome', { required: 'Obrigatório' })}
+              error={errors.nome} disabled={disabled('nome')}
+            />
             <MaskedInput
-              label="CPF"
-              name="cpf"
-              control={control}
-              mask={maskCpf}
-              disabled={disabled('cpf')}
-              placeholder="000.000.000-00"
+              label="CPF" name="cpf" control={control} mask={maskCpf}
+              disabled={disabled('cpf')} placeholder="000.000.000-00"
               rules={{ required: 'Obrigatório', validate: (v) => isCpfComplete(v) || 'CPF incompleto (11 dígitos)' }}
               error={errors.cpf}
             />
-            <FormInput label="Idade" type="number" registration={register('idade', { valueAsNumber: true, min: { value: 1, message: 'Idade deve ser positiva' }, max: { value: 120, message: 'Idade inválida' } })} error={errors.idade} />
+            <FormInput
+              label="Data de nascimento" type="date"
+              registration={register('dtNasc', { required: 'Obrigatório' })}
+              error={errors.dtNasc}
+            />
             <MaskedInput
-              label="Telefone"
-              name="telefone"
-              control={control}
-              mask={maskPhone}
+              label="Telefone" name="telefone" control={control} mask={maskPhone}
               placeholder="(00) 00000-0000"
               rules={{ required: 'Obrigatório', validate: (v) => isPhoneComplete(v) || 'Telefone incompleto' }}
               error={errors.telefone}
             />
-            <FormInput label="E-mail" type="email" registration={register('email', { required: 'Obrigatório', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'E-mail inválido' } })} error={errors.email} />
-            <FormSelect label="Status" registration={register('status')} options={[{ label: 'Aguardando triagem', value: 'AGUARDANDO_TRIAGEM' }, { label: 'Em atendimento', value: 'EM_ATENDIMENTO' }, { label: 'Finalizado', value: 'FINALIZADO' }]} />
+            <FormInput
+              label="E-mail" type="email"
+              registration={register('email', { required: 'Obrigatório', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'E-mail inválido' } })}
+              error={errors.email}
+            />
+            <AddressSection control={control} register={register} setValue={setValue} errors={errors} />
           </>}
+
+          {/* ── DENTISTAS ────────────────────────────────────────────────── */}
           {tab === 'dentistas' && <>
-            <FormInput label="Nome completo" registration={register('nome', { required: 'Obrigatório' })} error={errors.nome} disabled={disabled('nome')} />
-            <FormInput label="CRO (ex: CRO-SP 12345)" registration={register('cro', { required: 'Obrigatório', pattern: { value: /^CRO-[A-Z]{2}\s?\d+$/i, message: 'Formato: CRO-UF 12345' } })} error={errors.cro} disabled={disabled('cro')} placeholder="CRO-SP 12345" />
-            <FormInput label="Especialidade" registration={register('especialidade', { required: 'Obrigatório' })} error={errors.especialidade} />
+            <FormInput
+              label="CRO (ex: CRO-SP 12345)"
+              registration={register('cro', { required: 'Obrigatório', pattern: { value: /^CRO-[A-Z]{2}\s?\d+$/i, message: 'Formato: CRO-UF 12345' } })}
+              error={errors.cro} disabled={disabled('cro')} placeholder="CRO-SP 12345"
+            />
+            <FormInput
+              label="Nome completo"
+              registration={register('nome', { required: 'Obrigatório' })}
+              error={errors.nome} disabled={disabled('nome')}
+            />
             <MaskedInput
-              label="Telefone"
-              name="telefone"
-              control={control}
-              mask={maskPhone}
+              label="CPF" name="cpf" control={control} mask={maskCpf}
+              disabled={disabled('cpf')} placeholder="000.000.000-00"
+              rules={{ required: 'Obrigatório', validate: (v) => isCpfComplete(v) || 'CPF incompleto (11 dígitos)' }}
+              error={errors.cpf}
+            />
+            <FormInput
+              label="Data de nascimento" type="date"
+              registration={register('dtNasc', { required: 'Obrigatório' })}
+              error={errors.dtNasc}
+            />
+            <MaskedInput
+              label="Telefone" name="telefone" control={control} mask={maskPhone}
               placeholder="(00) 00000-0000"
               rules={{ required: 'Obrigatório', validate: (v) => isPhoneComplete(v) || 'Telefone incompleto' }}
               error={errors.telefone}
             />
-            <FormInput label="E-mail" type="email" registration={register('email', { required: 'Obrigatório', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'E-mail inválido' } })} error={errors.email} />
-            <FormSelect label="Disponível" registration={register('disponivel')} options={[{ label: 'Sim', value: 'true' }, { label: 'Não', value: 'false' }]} />
+            <FormInput
+              label="E-mail" type="email"
+              registration={register('email', { required: 'Obrigatório', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'E-mail inválido' } })}
+              error={errors.email}
+            />
+            <AddressSection control={control} register={register} setValue={setValue} errors={errors} />
           </>}
+
+          {/* ── DOADORES ─────────────────────────────────────────────────── */}
           {tab === 'doadores' && <>
-            <FormInput label="Nome / Razão social" registration={register('nome', { required: 'Obrigatório' })} error={errors.nome} disabled={disabled('nome')} />
+            <FormInput
+              label="Nome / Razão social"
+              registration={register('nome', { required: 'Obrigatório' })}
+              error={errors.nome} disabled={disabled('nome')}
+            />
             <MaskedInput
-              label="CPF / CNPJ"
-              name="cpfCnpj"
-              control={control}
-              mask={maskCpfCnpj}
-              disabled={disabled('cpfCnpj')}
-              placeholder="000.000.000-00 ou 00.000.000/0000-00"
+              label="CPF / CNPJ" name="documanto" control={control} mask={maskCpfCnpj}
+              disabled={disabled('documanto')} placeholder="000.000.000-00 ou 00.000.000/0000-00"
               rules={{ required: 'Obrigatório', validate: (v) => isCpfCnpjComplete(v) || 'CPF (11 dígitos) ou CNPJ (14 dígitos) incompleto' }}
-              error={errors.cpfCnpj}
+              error={errors.documanto}
+            />
+            <FormInput
+              label="Data de nascimento / fundação" type="date"
+              registration={register('dtNasc', { required: 'Obrigatório' })}
+              error={errors.dtNasc}
             />
             <MaskedInput
-              label="Telefone"
-              name="telefone"
-              control={control}
-              mask={maskPhone}
+              label="Telefone" name="telefone" control={control} mask={maskPhone}
               placeholder="(00) 00000-0000"
               rules={{ required: 'Obrigatório', validate: (v) => isPhoneComplete(v) || 'Telefone incompleto' }}
               error={errors.telefone}
             />
-            <FormInput label="E-mail" type="email" registration={register('email', { required: 'Obrigatório', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'E-mail inválido' } })} error={errors.email} />
-            <FormSelect label="Tipo de doador" registration={register('tipo')} options={[{ label: 'Pessoa Física', value: 'PESSOA_FISICA' }, { label: 'Pessoa Jurídica', value: 'PESSOA_JURIDICA' }]} />
+            <FormInput
+              label="E-mail" type="email"
+              registration={register('email', { required: 'Obrigatório', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'E-mail inválido' } })}
+              error={errors.email}
+            />
+            <AddressSection control={control} register={register} setValue={setValue} errors={errors} />
           </>}
+
+          {/* ── DOAÇÕES ──────────────────────────────────────────────────── */}
           {tab === 'doacoes' && <>
-            <FormInput label="ID do doador" type="number" disabled={disabled('doadorId')} registration={register('doadorId', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })} error={errors.doadorId} />
-            <FormInput label="Valor (R$)" type="number" registration={register('valor', { valueAsNumber: true, required: 'Obrigatório', min: { value: 0.01, message: 'Valor deve ser positivo' } })} error={errors.valor} />
-            <FormInput label="Data" type="date" registration={register('data', { required: 'Obrigatório' })} error={errors.data} />
-            <FormInput label="Finalidade" registration={register('finalidade', { required: 'Obrigatório' })} error={errors.finalidade} />
+            <FormInput
+              label="ID do doador" type="number"
+              disabled={disabled('idDoador')}
+              registration={register('idDoador', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })}
+              error={errors.idDoador}
+            />
+            <FormInput
+              label="Valor (R$)" type="number"
+              registration={register('valor', { valueAsNumber: true, required: 'Obrigatório', min: { value: 0.01, message: 'Valor deve ser positivo' } })}
+              error={errors.valor}
+            />
+            <FormInput
+              label="Descrição"
+              registration={register('descricao')}
+              error={errors.descricao}
+              placeholder="Opcional"
+            />
           </>}
+
+          {/* ── VOLUNTÁRIOS ──────────────────────────────────────────────── */}
           {tab === 'voluntarios' && <>
-            <FormInput label="Nome completo" registration={register('nome', { required: 'Obrigatório' })} error={errors.nome} disabled={disabled('nome')} />
-            <FormInput label="Área de atuação" registration={register('areaAtuacao', { required: 'Obrigatório' })} error={errors.areaAtuacao} />
+            <FormInput
+              label="CRO (ex: CRO-SP 12345)"
+              registration={register('cro', { required: 'Obrigatório', pattern: { value: /^CRO-[A-Z]{2}\s?\d+$/i, message: 'Formato: CRO-UF 12345' } })}
+              error={errors.cro} disabled={disabled('cro')} placeholder="CRO-SP 12345"
+            />
+            <FormInput
+              label="Nome completo"
+              registration={register('nome', { required: 'Obrigatório' })}
+              error={errors.nome} disabled={disabled('nome')}
+            />
             <MaskedInput
-              label="Telefone"
-              name="telefone"
-              control={control}
-              mask={maskPhone}
+              label="CPF" name="cpf" control={control} mask={maskCpf}
+              disabled={disabled('cpf')} placeholder="000.000.000-00"
+              rules={{ required: 'Obrigatório', validate: (v) => isCpfComplete(v) || 'CPF incompleto (11 dígitos)' }}
+              error={errors.cpf}
+            />
+            <FormInput
+              label="Data de nascimento" type="date"
+              registration={register('dtNasc', { required: 'Obrigatório' })}
+              error={errors.dtNasc}
+            />
+            <MaskedInput
+              label="Telefone" name="telefone" control={control} mask={maskPhone}
               placeholder="(00) 00000-0000"
               rules={{ required: 'Obrigatório', validate: (v) => isPhoneComplete(v) || 'Telefone incompleto' }}
               error={errors.telefone}
             />
-            <FormInput label="E-mail" type="email" registration={register('email', { required: 'Obrigatório', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'E-mail inválido' } })} error={errors.email} />
-            <FormSelect label="Ativo" registration={register('ativo')} options={[{ label: 'Sim', value: 'true' }, { label: 'Não', value: 'false' }]} />
+            <FormInput
+              label="E-mail" type="email"
+              registration={register('email', { required: 'Obrigatório', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'E-mail inválido' } })}
+              error={errors.email}
+            />
+            <FormInput
+              label="Data de cadastro" type="date"
+              registration={register('dataCadastro', { required: 'Obrigatório' })}
+              error={errors.dataCadastro}
+            />
+            <AddressSection control={control} register={register} setValue={setValue} errors={errors} />
           </>}
+
+          {/* ── TRIAGENS ─────────────────────────────────────────────────── */}
           {tab === 'triagens' && <>
-            <FormInput label="ID do beneficiário" type="number" disabled={disabled('beneficiarioId')} registration={register('beneficiarioId', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })} error={errors.beneficiarioId} />
-            <FormInput label="ID do voluntário" type="number" registration={register('voluntarioId', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })} error={errors.voluntarioId} />
-            <FormInput label="Data da triagem" type="date" registration={register('dataTriagem', { required: 'Obrigatório' })} error={errors.dataTriagem} />
-            <FormSelect label="Prioridade" registration={register('prioridade')} options={[{ label: 'Baixa', value: 'BAIXA' }, { label: 'Média', value: 'MEDIA' }, { label: 'Alta', value: 'ALTA' }]} />
-            <FormTextarea label="Observação" registration={register('observacao', { required: 'Obrigatório' })} error={errors.observacao} />
-            <FormTextarea label="Encaminhamento" registration={register('encaminhamento', { required: 'Obrigatório' })} error={errors.encaminhamento} />
+            <FormInput
+              label="ID do beneficiário" type="number"
+              disabled={disabled('idBeneficiario')}
+              registration={register('idBeneficiario', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })}
+              error={errors.idBeneficiario}
+            />
+            <FormInput
+              label="ID do voluntário" type="number"
+              registration={register('idVoluntario', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })}
+              error={errors.idVoluntario}
+            />
+            <FormInput
+              label="Data de início" type="date"
+              registration={register('dataInicio', { required: 'Obrigatório' })}
+              error={errors.dataInicio}
+            />
+            <FormInput
+              label="Data de fim" type="date"
+              registration={register('dataFim')}
+              error={errors.dataFim}
+              placeholder="Opcional"
+            />
+            <FormSelect
+              label="Resultado"
+              registration={register('resultado', { required: 'Obrigatório' })}
+              options={[
+                { label: 'Alto', value: 'ALTO' },
+                { label: 'Médio', value: 'MEDIO' },
+                { label: 'Baixo', value: 'BAIXO' },
+              ]}
+              error={errors.resultado}
+            />
           </>}
-          <div className="flex justify-end gap-2 md:col-span-2">
+
+          <div className="flex justify-end gap-2 md:col-span-2 pt-2 border-t">
             <button type="button" onClick={() => setOpenModal(false)} className="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700 transition hover:bg-slate-50">
               Cancelar
             </button>

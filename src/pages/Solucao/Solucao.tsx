@@ -7,6 +7,7 @@ import { DashboardCard } from '../../components/DashboardCard/DashboardCard';
 import { FormInput } from '../../components/FormInput/FormInput';
 import { FormSelect } from '../../components/FormSelect/FormSelect';
 import { FormTextarea } from '../../components/FormTextarea/FormTextarea';
+import { MaskedInput } from '../../components/MaskedInput/MaskedInput';
 import { StatusBadge } from '../../components/StatusBadge/StatusBadge';
 import { beneficiarioService } from '../../services/beneficiarioService';
 import { dentistaService } from '../../services/dentistaService';
@@ -17,6 +18,7 @@ import { voluntarioService } from '../../services/voluntarioService';
 import { isApiEnabled } from '../../services/api';
 import type { Beneficiario, DashboardResumo, Dentista, Doacao, Doador, Triagem, Voluntario } from '../../types';
 import { resetStorageKey } from '../../utils/storage';
+import { maskCpf, maskCpfCnpj, maskPhone, isCpfComplete, isCpfCnpjComplete, isPhoneComplete } from '../../utils/masks';
 
 type TabKey = 'beneficiarios' | 'dentistas' | 'doadores' | 'doacoes' | 'voluntarios' | 'triagens';
 type AnyEntity = Beneficiario | Dentista | Doador | Doacao | Voluntario | Triagem;
@@ -136,7 +138,7 @@ export function Solucao() {
   const [deleteTarget, setDeleteTarget] = useState<AnyEntity | null>(null);
   const [msg, setMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<any>();
+  const { register, handleSubmit, reset, control, formState: { errors, isSubmitting } } = useForm<any>();
   const apiAtiva = isApiEnabled();
 
   useEffect(() => {
@@ -376,44 +378,94 @@ export function Solucao() {
       >
         <form onSubmit={handleSubmit(save)} className="grid gap-3 md:grid-cols-2">
           {tab === 'beneficiarios' && <>
-            <FormInput label="Nome" registration={register('nome', { required: 'Obrigatório' })} error={errors.nome} disabled={disabled('nome')} />
-            <FormInput label="CPF" registration={register('cpf', { required: 'Obrigatório' })} error={errors.cpf} disabled={disabled('cpf')} />
-            <FormInput label="Idade" type="number" registration={register('idade', { valueAsNumber: true, min: { value: 1, message: 'Idade deve ser positiva' } })} error={errors.idade} />
-            <FormInput label="Telefone" registration={register('telefone', { required: 'Obrigatório' })} error={errors.telefone} />
+            <FormInput label="Nome completo" registration={register('nome', { required: 'Obrigatório' })} error={errors.nome} disabled={disabled('nome')} />
+            <MaskedInput
+              label="CPF"
+              name="cpf"
+              control={control}
+              mask={maskCpf}
+              disabled={disabled('cpf')}
+              placeholder="000.000.000-00"
+              rules={{ required: 'Obrigatório', validate: (v) => isCpfComplete(v) || 'CPF incompleto (11 dígitos)' }}
+              error={errors.cpf}
+            />
+            <FormInput label="Idade" type="number" registration={register('idade', { valueAsNumber: true, min: { value: 1, message: 'Idade deve ser positiva' }, max: { value: 120, message: 'Idade inválida' } })} error={errors.idade} />
+            <MaskedInput
+              label="Telefone"
+              name="telefone"
+              control={control}
+              mask={maskPhone}
+              placeholder="(00) 00000-0000"
+              rules={{ required: 'Obrigatório', validate: (v) => isPhoneComplete(v) || 'Telefone incompleto' }}
+              error={errors.telefone}
+            />
             <FormInput label="E-mail" type="email" registration={register('email', { required: 'Obrigatório', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'E-mail inválido' } })} error={errors.email} />
             <FormSelect label="Status" registration={register('status')} options={[{ label: 'Aguardando triagem', value: 'AGUARDANDO_TRIAGEM' }, { label: 'Em atendimento', value: 'EM_ATENDIMENTO' }, { label: 'Finalizado', value: 'FINALIZADO' }]} />
           </>}
           {tab === 'dentistas' && <>
-            <FormInput label="Nome" registration={register('nome', { required: 'Obrigatório' })} error={errors.nome} disabled={disabled('nome')} />
-            <FormInput label="CRO" registration={register('cro', { required: 'Obrigatório' })} error={errors.cro} disabled={disabled('cro')} />
+            <FormInput label="Nome completo" registration={register('nome', { required: 'Obrigatório' })} error={errors.nome} disabled={disabled('nome')} />
+            <FormInput label="CRO (ex: CRO-SP 12345)" registration={register('cro', { required: 'Obrigatório', pattern: { value: /^CRO-[A-Z]{2}\s?\d+$/i, message: 'Formato: CRO-UF 12345' } })} error={errors.cro} disabled={disabled('cro')} placeholder="CRO-SP 12345" />
             <FormInput label="Especialidade" registration={register('especialidade', { required: 'Obrigatório' })} error={errors.especialidade} />
-            <FormInput label="Telefone" registration={register('telefone', { required: 'Obrigatório' })} error={errors.telefone} />
-            <FormInput label="E-mail" type="email" registration={register('email', { required: 'Obrigatório' })} error={errors.email} />
+            <MaskedInput
+              label="Telefone"
+              name="telefone"
+              control={control}
+              mask={maskPhone}
+              placeholder="(00) 00000-0000"
+              rules={{ required: 'Obrigatório', validate: (v) => isPhoneComplete(v) || 'Telefone incompleto' }}
+              error={errors.telefone}
+            />
+            <FormInput label="E-mail" type="email" registration={register('email', { required: 'Obrigatório', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'E-mail inválido' } })} error={errors.email} />
             <FormSelect label="Disponível" registration={register('disponivel')} options={[{ label: 'Sim', value: 'true' }, { label: 'Não', value: 'false' }]} />
           </>}
           {tab === 'doadores' && <>
-            <FormInput label="Nome" registration={register('nome', { required: 'Obrigatório' })} error={errors.nome} disabled={disabled('nome')} />
-            <FormInput label="CPF/CNPJ" registration={register('cpfCnpj', { required: 'Obrigatório' })} error={errors.cpfCnpj} disabled={disabled('cpfCnpj')} />
-            <FormInput label="Telefone" registration={register('telefone', { required: 'Obrigatório' })} error={errors.telefone} />
-            <FormInput label="E-mail" type="email" registration={register('email', { required: 'Obrigatório' })} error={errors.email} />
-            <FormSelect label="Tipo" registration={register('tipo')} options={[{ label: 'Pessoa Física', value: 'PESSOA_FISICA' }, { label: 'Pessoa Jurídica', value: 'PESSOA_JURIDICA' }]} />
+            <FormInput label="Nome / Razão social" registration={register('nome', { required: 'Obrigatório' })} error={errors.nome} disabled={disabled('nome')} />
+            <MaskedInput
+              label="CPF / CNPJ"
+              name="cpfCnpj"
+              control={control}
+              mask={maskCpfCnpj}
+              disabled={disabled('cpfCnpj')}
+              placeholder="000.000.000-00 ou 00.000.000/0000-00"
+              rules={{ required: 'Obrigatório', validate: (v) => isCpfCnpjComplete(v) || 'CPF (11 dígitos) ou CNPJ (14 dígitos) incompleto' }}
+              error={errors.cpfCnpj}
+            />
+            <MaskedInput
+              label="Telefone"
+              name="telefone"
+              control={control}
+              mask={maskPhone}
+              placeholder="(00) 00000-0000"
+              rules={{ required: 'Obrigatório', validate: (v) => isPhoneComplete(v) || 'Telefone incompleto' }}
+              error={errors.telefone}
+            />
+            <FormInput label="E-mail" type="email" registration={register('email', { required: 'Obrigatório', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'E-mail inválido' } })} error={errors.email} />
+            <FormSelect label="Tipo de doador" registration={register('tipo')} options={[{ label: 'Pessoa Física', value: 'PESSOA_FISICA' }, { label: 'Pessoa Jurídica', value: 'PESSOA_JURIDICA' }]} />
           </>}
           {tab === 'doacoes' && <>
-            <FormInput label="ID do doador" type="number" disabled={disabled('doadorId')} registration={register('doadorId', { valueAsNumber: true, required: 'Obrigatório' })} error={errors.doadorId} />
-            <FormInput label="Valor (R$)" type="number" registration={register('valor', { valueAsNumber: true, min: { value: 0.01, message: 'Valor deve ser positivo' } })} error={errors.valor} />
+            <FormInput label="ID do doador" type="number" disabled={disabled('doadorId')} registration={register('doadorId', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })} error={errors.doadorId} />
+            <FormInput label="Valor (R$)" type="number" registration={register('valor', { valueAsNumber: true, required: 'Obrigatório', min: { value: 0.01, message: 'Valor deve ser positivo' } })} error={errors.valor} />
             <FormInput label="Data" type="date" registration={register('data', { required: 'Obrigatório' })} error={errors.data} />
             <FormInput label="Finalidade" registration={register('finalidade', { required: 'Obrigatório' })} error={errors.finalidade} />
           </>}
           {tab === 'voluntarios' && <>
-            <FormInput label="Nome" registration={register('nome', { required: 'Obrigatório' })} error={errors.nome} disabled={disabled('nome')} />
+            <FormInput label="Nome completo" registration={register('nome', { required: 'Obrigatório' })} error={errors.nome} disabled={disabled('nome')} />
             <FormInput label="Área de atuação" registration={register('areaAtuacao', { required: 'Obrigatório' })} error={errors.areaAtuacao} />
-            <FormInput label="Telefone" registration={register('telefone', { required: 'Obrigatório' })} error={errors.telefone} />
-            <FormInput label="E-mail" type="email" registration={register('email', { required: 'Obrigatório' })} error={errors.email} />
+            <MaskedInput
+              label="Telefone"
+              name="telefone"
+              control={control}
+              mask={maskPhone}
+              placeholder="(00) 00000-0000"
+              rules={{ required: 'Obrigatório', validate: (v) => isPhoneComplete(v) || 'Telefone incompleto' }}
+              error={errors.telefone}
+            />
+            <FormInput label="E-mail" type="email" registration={register('email', { required: 'Obrigatório', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'E-mail inválido' } })} error={errors.email} />
             <FormSelect label="Ativo" registration={register('ativo')} options={[{ label: 'Sim', value: 'true' }, { label: 'Não', value: 'false' }]} />
           </>}
           {tab === 'triagens' && <>
-            <FormInput label="ID do beneficiário" type="number" disabled={disabled('beneficiarioId')} registration={register('beneficiarioId', { valueAsNumber: true, required: 'Obrigatório' })} error={errors.beneficiarioId} />
-            <FormInput label="ID do voluntário" type="number" registration={register('voluntarioId', { valueAsNumber: true, required: 'Obrigatório' })} error={errors.voluntarioId} />
+            <FormInput label="ID do beneficiário" type="number" disabled={disabled('beneficiarioId')} registration={register('beneficiarioId', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })} error={errors.beneficiarioId} />
+            <FormInput label="ID do voluntário" type="number" registration={register('voluntarioId', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })} error={errors.voluntarioId} />
             <FormInput label="Data da triagem" type="date" registration={register('dataTriagem', { required: 'Obrigatório' })} error={errors.dataTriagem} />
             <FormSelect label="Prioridade" registration={register('prioridade')} options={[{ label: 'Baixa', value: 'BAIXA' }, { label: 'Média', value: 'MEDIA' }, { label: 'Alta', value: 'ALTA' }]} />
             <FormTextarea label="Observação" registration={register('observacao', { required: 'Obrigatório' })} error={errors.observacao} />

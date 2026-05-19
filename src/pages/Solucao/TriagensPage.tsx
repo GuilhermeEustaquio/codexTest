@@ -28,11 +28,12 @@ export function TriagensPage() {
   const onCancel = () => { setEditing(null); reset({}); };
 
   const save = async (values: any) => {
+    const payload = { ...values, idBenef: Number(values.idBenef), idVolun: Number(values.idVolun) };
     if (editing?.id) {
-      const updated = await triagemService.atualizar(editing.id, { ...editing, ...values });
+      const updated = await triagemService.atualizar(editing.id, { ...editing, ...payload });
       setList((p) => p.map((x) => x.id === editing.id ? updated : x));
     } else {
-      const created = await triagemService.criar(values);
+      const created = await triagemService.criar(payload);
       setList((p) => [...p, created]);
     }
     onCancel();
@@ -53,18 +54,22 @@ export function TriagensPage() {
       <form onSubmit={handleSubmit(save)} className="grid gap-3 rounded-2xl border bg-white p-5 md:grid-cols-2">
         <h2 className="md:col-span-2 font-semibold text-slate-700">{editing ? 'Editar triagem' : 'Nova triagem'}</h2>
         <FormInput label="ID do beneficiário" type="number"
-          registration={register('idBeneficiario', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })}
-          error={errors.idBeneficiario} disabled={!!editing} />
+          registration={register('idBenef', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })}
+          error={errors.idBenef} disabled={!!editing} />
         <FormInput label="ID do voluntário" type="number"
-          registration={register('idVoluntario', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })}
-          error={errors.idVoluntario} />
+          registration={register('idVolun', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })}
+          error={errors.idVolun} />
         <FormInput label="Data de início" type="date"
-          registration={register('dataInicio', { required: 'Obrigatório' })} error={errors.dataInicio} />
+          registration={register('dtInicio', { required: 'Obrigatório' })} error={errors.dtInicio} />
         <FormInput label="Data de fim" type="date"
-          registration={register('dataFim')} error={errors.dataFim} placeholder="Opcional" />
+          registration={register('dtFim')} error={errors.dtFim} placeholder="Opcional" />
         <FormSelect label="Resultado"
           registration={register('resultado', { required: 'Obrigatório' })}
-          options={[{ label: 'Alto', value: 'ALTO' }, { label: 'Médio', value: 'MEDIO' }, { label: 'Baixo', value: 'BAIXO' }]}
+          options={[
+            { label: 'Pendente', value: 'PENDENTE' },
+            { label: 'Aprovado', value: 'APROVADO' },
+            { label: 'Reprovado', value: 'REPROVADO' },
+          ]}
           error={errors.resultado} />
         <div className="md:col-span-2 flex gap-2 pt-2 border-t">
           <button type="submit" className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700">
@@ -82,11 +87,11 @@ export function TriagensPage() {
                 <div className="flex items-center gap-2">
                   <p className="font-semibold">Triagem #{t.id}</p>
                   <StatusBadge text={t.resultado} />
-                  {!t.dataFim && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">Em andamento</span>}
+                  {!t.dtFim && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">Em andamento</span>}
                 </div>
                 <p className="text-xs text-slate-500">
-                  Benef. ID: {t.idBeneficiario} · Vol. ID: {t.idVoluntario} · Início: {t.dataInicio}
-                  {t.dataFim && ` · Fim: ${t.dataFim}`}
+                  Benef. ID: {t.idBenef} · Vol. ID: {t.idVolun} · Início: {t.dtInicio}
+                  {t.dtFim && ` · Fim: ${t.dtFim}`}
                 </p>
               </div>
               <div className="flex gap-2">

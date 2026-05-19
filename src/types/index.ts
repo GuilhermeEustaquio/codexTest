@@ -32,39 +32,32 @@ export interface ContactFormValues {
   mensagem: string;
 }
 
-// ── Address fields shared by all main entities ──────────────────────────────
+// ── Shared address object (maps to Java Endereco class) ────────────────────
 export interface Endereco {
-  cep: string;        // 8 raw digits (DB: char(8))
+  cep: string;         // 8 raw digits — backend validates cep.length() == 8
   logradouro: string;
   bairro: string;
-  uf: string;         // 2-letter state code (DB: char(2))
+  uf: string;          // 2-letter state code
   localidade: string;
   numero?: string;
   complemento?: string;
 }
 
-// ── Entities aligned with Oracle DB schema ───────────────────────────────────
+// ── Entities aligned with Java domain classes & Oracle DB ─────────────────
 
-export interface Beneficiario extends Endereco {
+/** Maps to Java Beneficiario extends Pessoa */
+export interface Beneficiario {
   id?: number;
   nome: string;
-  cpf: string;       // 11 raw digits (DB: char(11))
-  dtNasc: string;    // ISO date YYYY-MM-DD (DB: date)
+  cpf: string;         // 11 raw digits
+  dtNasc: string;      // ISO date YYYY-MM-DD
   email: string;
-  telefone: string;  // raw digits (DB: varchar2(15))
+  telefone: string;    // 10 or 11 raw digits
+  endereco: Endereco;  // nested object
 }
 
-export interface Dentista extends Endereco {
-  id?: number;
-  cro: string;
-  nome: string;
-  cpf: string;
-  dtNasc: string;
-  email: string;
-  telefone: string;
-}
-
-export interface Voluntario extends Endereco {
+/** Maps to Java Dentista extends Pessoa */
+export interface Dentista {
   id?: number;
   cro: string;
   nome: string;
@@ -72,34 +65,49 @@ export interface Voluntario extends Endereco {
   dtNasc: string;
   email: string;
   telefone: string;
-  dataCadastro: string;
+  endereco: Endereco;
 }
 
-export interface Doador extends Endereco {
+/** Maps to Java Voluntario extends Pessoa */
+export interface Voluntario {
   id?: number;
+  cro: string;
   nome: string;
-  /** CPF (11 digits) or CNPJ (14 digits) — DB column is "DOCUMANTO" (backend typo) */
-  documanto: string;
+  cpf: string;
   dtNasc: string;
   email: string;
   telefone: string;
+  endereco: Endereco;
+  dtCadastro: string;  // Java field: dtCadastro
 }
 
+/** Maps to Java Doador extends Pessoa (cpf is null; uses documento instead) */
+export interface Doador {
+  id?: number;
+  nome: string;
+  documento: string;   // Java field: documento (DB column DOCUMANTO has a typo)
+  dtNasc: string;
+  email: string;
+  telefone: string;
+  endereco: Endereco;
+}
+
+/** Maps to Java Doacao */
 export interface Doacao {
   id?: number;
   valor: number;
   descricao?: string;
-  idDoador: number;
+  doadorId: number;    // Java field: doadorId
 }
 
+/** Maps to Java Triagem + ResultadoTriagem enum */
 export interface Triagem {
   id?: number;
-  dataInicio: string;
-  dataFim?: string;
-  /** varchar2(10): ALTO | MEDIO | BAIXO */
-  resultado: 'ALTO' | 'MEDIO' | 'BAIXO';
-  idBeneficiario: number;
-  idVoluntario: number;
+  idBenef: number;     // Java field: idBenef
+  idVolun: number;     // Java field: idVolun
+  dtInicio: string;    // Java field: dtInicio
+  dtFim?: string;      // Java field: dtFim (nullable)
+  resultado: 'APROVADO' | 'REPROVADO' | 'PENDENTE';
 }
 
 export interface DashboardResumo {
@@ -109,7 +117,7 @@ export interface DashboardResumo {
   totalDoadores: number;
   totalDoacoes: number;
   totalTriagens: number;
-  triagensEmAndamento: number;   // triagens without dataFim
+  triagensEmAndamento: number;
 }
 
 export type BeneficiarioFormValues = Omit<Beneficiario, 'id'>;

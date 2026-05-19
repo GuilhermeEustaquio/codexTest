@@ -29,7 +29,7 @@ export function VoluntariosPage() {
   const onCancel = () => { setEditing(null); reset({}); };
 
   const save = async (values: any) => {
-    const payload = { ...values, cpf: digits(values.cpf ?? ''), cep: digits(values.cep ?? ''), telefone: digits(values.telefone ?? '') };
+    const payload = { ...values, cpf: digits(values.cpf ?? ''), telefone: digits(values.telefone ?? ''), endereco: { ...values.endereco, cep: digits(values.endereco?.cep ?? '') } };
     if (editing?.id) {
       const updated = await voluntarioService.atualizar(editing.id, { ...editing, ...payload });
       setList((p) => p.map((x) => x.id === editing.id ? updated : x));
@@ -68,7 +68,7 @@ export function VoluntariosPage() {
         <FormInput label="E-mail" type="email"
           registration={register('email', { required: 'Obrigatório', pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'E-mail inválido' } })}
           error={errors.email} />
-        <FormInput label="Data de cadastro" type="date" registration={register('dataCadastro', { required: 'Obrigatório' })} error={errors.dataCadastro} />
+        <FormInput label="Data de cadastro" type="date" registration={register('dtCadastro', { required: 'Obrigatório' })} error={errors.dtCadastro} />
         <AddressSection control={control} register={register} setValue={setValue} errors={errors} />
         <div className="md:col-span-2 flex gap-2 pt-2 border-t">
           <button type="submit" className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-teal-700">
@@ -84,7 +84,7 @@ export function VoluntariosPage() {
             <li key={v.id} className="flex items-center justify-between rounded-xl border bg-white p-4 text-sm shadow-sm">
               <div>
                 <p className="font-semibold">{v.nome}</p>
-                <p className="text-xs text-slate-500">{v.cro} · {maskCpf(v.cpf)} · {v.email} · {v.localidade}/{v.uf}</p>
+                <p className="text-xs text-slate-500">{v.cro} · {maskCpf(v.cpf)} · {v.email} · {v.endereco?.localidade}/{v.endereco?.uf}</p>
               </div>
               <div className="flex gap-2">
                 <button onClick={() => onEdit(v)} className="rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white">Editar</button>

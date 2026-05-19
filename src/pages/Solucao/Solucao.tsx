@@ -49,7 +49,7 @@ function EntityRow({ tab, item }: { tab: TabKey; item: any }) {
             {item.dtNasc && <span>Nasc: {item.dtNasc}</span>}
             <span>{item.email}</span>
             <span>{maskPhone(item.telefone ?? '')}</span>
-            <span>{item.localidade}/{item.uf}</span>
+            {item.endereco && <span>{item.endereco.localidade}/{item.endereco.uf}</span>}
           </div>
         );
       case 'dentistas':
@@ -58,22 +58,22 @@ function EntityRow({ tab, item }: { tab: TabKey; item: any }) {
             <span>CRO: {item.cro}</span>
             <span>CPF: {maskCpf(item.cpf ?? '')}</span>
             <span>{item.email}</span>
-            <span>{item.localidade}/{item.uf}</span>
+            {item.endereco && <span>{item.endereco.localidade}/{item.endereco.uf}</span>}
           </div>
         );
       case 'doadores':
         return (
           <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-500">
-            <span>Doc: {maskCpfCnpj(item.documanto ?? '')}</span>
+            <span>Doc: {maskCpfCnpj(item.documento ?? '')}</span>
             <span>{item.email}</span>
             <span>{maskPhone(item.telefone ?? '')}</span>
-            <span>{item.localidade}/{item.uf}</span>
+            {item.endereco && <span>{item.endereco.localidade}/{item.endereco.uf}</span>}
           </div>
         );
       case 'doacoes':
         return (
           <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-500">
-            <span>Doador ID: {item.idDoador}</span>
+            <span>Doador ID: {item.doadorId}</span>
             <span>Valor: R$ {Number(item.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
             {item.descricao && <span>{item.descricao}</span>}
           </div>
@@ -84,16 +84,16 @@ function EntityRow({ tab, item }: { tab: TabKey; item: any }) {
             <span>CRO: {item.cro}</span>
             <span>CPF: {maskCpf(item.cpf ?? '')}</span>
             <span>{item.email}</span>
-            <span>{item.localidade}/{item.uf}</span>
+            {item.endereco && <span>{item.endereco.localidade}/{item.endereco.uf}</span>}
           </div>
         );
       case 'triagens':
         return (
           <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-500">
-            <span>Benef. ID: {item.idBeneficiario}</span>
-            <span>Voluntário ID: {item.idVoluntario}</span>
-            <span>Início: {item.dataInicio}</span>
-            {item.dataFim && <span>Fim: {item.dataFim}</span>}
+            <span>Benef. ID: {item.idBenef}</span>
+            <span>Vol. ID: {item.idVolun}</span>
+            <span>Início: {item.dtInicio}</span>
+            {item.dtFim && <span>Fim: {item.dtFim}</span>}
           </div>
         );
     }
@@ -211,11 +211,14 @@ export function Solucao() {
   (window as any).__onEdit   = onEdit;
   (window as any).__onDelete = (item: AnyEntity) => setDeleteTarget(item);
 
-  /** Strip masks from raw-digit fields before persisting */
+  /** Strip masks from raw-digit fields before persisting to API */
   const cleanForSave = (values: any): any => {
     const out = { ...values };
-    for (const f of ['cpf', 'cep', 'telefone', 'documanto'] as const) {
-      if (f in out && typeof out[f] === 'string') out[f] = digits(out[f]);
+    if (typeof out.cpf === 'string')       out.cpf       = digits(out.cpf);
+    if (typeof out.telefone === 'string')  out.telefone  = digits(out.telefone);
+    if (typeof out.documento === 'string') out.documento = digits(out.documento);
+    if (out.endereco && typeof out.endereco.cep === 'string') {
+      out.endereco = { ...out.endereco, cep: digits(out.endereco.cep) };
     }
     return out;
   };
@@ -266,10 +269,10 @@ export function Solucao() {
     isEditing && (
       (tab === 'beneficiarios' && ['nome', 'cpf'].includes(field)) ||
       (tab === 'dentistas'     && ['nome', 'cro', 'cpf'].includes(field)) ||
-      (tab === 'doadores'      && ['nome', 'documanto'].includes(field)) ||
+      (tab === 'doadores'      && ['nome', 'documento'].includes(field)) ||
       (tab === 'voluntarios'   && ['nome', 'cro', 'cpf'].includes(field)) ||
-      (tab === 'doacoes'       && ['idDoador'].includes(field)) ||
-      (tab === 'triagens'      && ['idBeneficiario'].includes(field))
+      (tab === 'doacoes'       && ['doadorId'].includes(field)) ||
+      (tab === 'triagens'      && ['idBenef'].includes(field))
     );
 
   const currentTabLabel = tabs.find((t) => t.key === tab)?.label ?? '';
@@ -461,10 +464,10 @@ export function Solucao() {
               error={errors.nome} disabled={disabled('nome')}
             />
             <MaskedInput
-              label="CPF / CNPJ" name="documanto" control={control} mask={maskCpfCnpj}
-              disabled={disabled('documanto')} placeholder="000.000.000-00 ou 00.000.000/0000-00"
+              label="CPF / CNPJ" name="documento" control={control} mask={maskCpfCnpj}
+              disabled={disabled('documento')} placeholder="000.000.000-00 ou 00.000.000/0000-00"
               rules={{ required: 'Obrigatório', validate: (v) => isCpfCnpjComplete(v) || 'CPF (11 dígitos) ou CNPJ (14 dígitos) incompleto' }}
-              error={errors.documanto}
+              error={errors.documento}
             />
             <FormInput
               label="Data de nascimento / fundação" type="date"
@@ -489,9 +492,9 @@ export function Solucao() {
           {tab === 'doacoes' && <>
             <FormInput
               label="ID do doador" type="number"
-              disabled={disabled('idDoador')}
-              registration={register('idDoador', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })}
-              error={errors.idDoador}
+              disabled={disabled('doadorId')}
+              registration={register('doadorId', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })}
+              error={errors.doadorId}
             />
             <FormInput
               label="Valor (R$)" type="number"
@@ -542,8 +545,8 @@ export function Solucao() {
             />
             <FormInput
               label="Data de cadastro" type="date"
-              registration={register('dataCadastro', { required: 'Obrigatório' })}
-              error={errors.dataCadastro}
+              registration={register('dtCadastro', { required: 'Obrigatório' })}
+              error={errors.dtCadastro}
             />
             <AddressSection control={control} register={register} setValue={setValue} errors={errors} />
           </>}
@@ -552,33 +555,33 @@ export function Solucao() {
           {tab === 'triagens' && <>
             <FormInput
               label="ID do beneficiário" type="number"
-              disabled={disabled('idBeneficiario')}
-              registration={register('idBeneficiario', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })}
-              error={errors.idBeneficiario}
+              disabled={disabled('idBenef')}
+              registration={register('idBenef', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })}
+              error={errors.idBenef}
             />
             <FormInput
               label="ID do voluntário" type="number"
-              registration={register('idVoluntario', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })}
-              error={errors.idVoluntario}
+              registration={register('idVolun', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })}
+              error={errors.idVolun}
             />
             <FormInput
               label="Data de início" type="date"
-              registration={register('dataInicio', { required: 'Obrigatório' })}
-              error={errors.dataInicio}
+              registration={register('dtInicio', { required: 'Obrigatório' })}
+              error={errors.dtInicio}
             />
             <FormInput
               label="Data de fim" type="date"
-              registration={register('dataFim')}
-              error={errors.dataFim}
+              registration={register('dtFim')}
+              error={errors.dtFim}
               placeholder="Opcional"
             />
             <FormSelect
               label="Resultado"
               registration={register('resultado', { required: 'Obrigatório' })}
               options={[
-                { label: 'Alto', value: 'ALTO' },
-                { label: 'Médio', value: 'MEDIO' },
-                { label: 'Baixo', value: 'BAIXO' },
+                { label: 'Aprovado',  value: 'APROVADO' },
+                { label: 'Reprovado', value: 'REPROVADO' },
+                { label: 'Pendente',  value: 'PENDENTE' },
               ]}
               error={errors.resultado}
             />

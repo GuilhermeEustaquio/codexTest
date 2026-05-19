@@ -51,8 +51,8 @@ export function DoacoesPage() {
       <form onSubmit={handleSubmit(save)} className="grid gap-3 rounded-2xl border bg-white p-5 md:grid-cols-2">
         <h2 className="md:col-span-2 font-semibold text-slate-700">{editing ? 'Editar doação' : 'Nova doação'}</h2>
         <FormInput label="ID do doador" type="number"
-          registration={register('idDoador', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })}
-          error={errors.idDoador} disabled={!!editing} />
+          registration={register('doadorId', { valueAsNumber: true, required: 'Obrigatório', min: { value: 1, message: 'ID inválido' } })}
+          error={errors.doadorId} disabled={!!editing} />
         <FormInput label="Valor (R$)" type="number"
           registration={register('valor', { valueAsNumber: true, required: 'Obrigatório', min: { value: 0.01, message: 'Valor positivo' } })}
           error={errors.valor} />
@@ -72,7 +72,7 @@ export function DoacoesPage() {
               <div>
                 <p className="font-semibold">Doação #{d.id}</p>
                 <p className="text-xs text-slate-500">
-                  Doador ID: {d.idDoador} · R$ {Number(d.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  Doador ID: {d.doadorId} · R$ {Number(d.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   {d.descricao && ` · ${d.descricao}`}
                 </p>
               </div>

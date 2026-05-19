@@ -29,7 +29,7 @@ export function BeneficiariosPage() {
   const onCancel = () => { setEditing(null); reset({}); };
 
   const save = async (values: any) => {
-    const payload = { ...values, cpf: digits(values.cpf ?? ''), cep: digits(values.cep ?? ''), telefone: digits(values.telefone ?? '') };
+    const payload = { ...values, cpf: digits(values.cpf ?? ''), telefone: digits(values.telefone ?? ''), endereco: { ...values.endereco, cep: digits(values.endereco?.cep ?? '') } };
     if (editing?.id) {
       const updated = await beneficiarioService.atualizar(editing.id, { ...editing, ...payload });
       setList((p) => p.map((x) => x.id === editing.id ? updated : x));
@@ -80,7 +80,7 @@ export function BeneficiariosPage() {
             <li key={b.id} className="flex items-center justify-between rounded-xl border bg-white p-4 text-sm shadow-sm">
               <div>
                 <p className="font-semibold">{b.nome}</p>
-                <p className="text-xs text-slate-500">{maskCpf(b.cpf)} · {b.email} · {b.localidade}/{b.uf}</p>
+                <p className="text-xs text-slate-500">{maskCpf(b.cpf)} · {b.email} · {b.endereco?.localidade}/{b.endereco?.uf}</p>
               </div>
               <div className="flex gap-2">
                 <button onClick={() => onEdit(b)} className="rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white">Editar</button>

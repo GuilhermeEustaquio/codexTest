@@ -15,7 +15,8 @@ interface Props {
 }
 
 export function AddressSection({ control, register, setValue, errors }: Props) {
-  const cep = useWatch({ control, name: 'cep' });
+  // All fields use the nested "endereco." prefix to match Java's Endereco object
+  const cep = useWatch({ control, name: 'endereco.cep' });
   const [fetching, setFetching] = useState(false);
   const [cepMsg, setCepMsg] = useState<{ text: string; ok: boolean } | null>(null);
 
@@ -28,19 +29,18 @@ export function AddressSection({ control, register, setValue, errors }: Props) {
     fetch(`https://viacep.com.br/ws/${raw}/json/`)
       .then((r) => r.json())
       .then((data) => {
-        if (data.erro) {
-          setCepMsg({ text: 'CEP não encontrado', ok: false });
-          return;
-        }
-        setValue('logradouro', data.logradouro ?? '');
-        setValue('bairro', data.bairro ?? '');
-        setValue('uf', data.uf ?? '');
-        setValue('localidade', data.localidade ?? '');
+        if (data.erro) { setCepMsg({ text: 'CEP não encontrado', ok: false }); return; }
+        setValue('endereco.logradouro', data.logradouro ?? '');
+        setValue('endereco.bairro',     data.bairro     ?? '');
+        setValue('endereco.uf',         data.uf         ?? '');
+        setValue('endereco.localidade', data.localidade ?? '');
         setCepMsg({ text: `${data.localidade} / ${data.uf}`, ok: true });
       })
       .catch(() => setCepMsg({ text: 'Erro ao consultar CEP', ok: false }))
       .finally(() => setFetching(false));
   }, [cep, setValue]);
+
+  const endErrors = errors?.endereco ?? {};
 
   return (
     <>
@@ -50,11 +50,11 @@ export function AddressSection({ control, register, setValue, errors }: Props) {
         <span className="flex-1 border-t border-slate-200" />
       </div>
 
-      {/* CEP + UF */}
+      {/* CEP */}
       <div className="relative">
         <MaskedInput
           label="CEP"
-          name="cep"
+          name="endereco.cep"
           control={control}
           mask={maskCep}
           placeholder="00000-000"
@@ -62,7 +62,7 @@ export function AddressSection({ control, register, setValue, errors }: Props) {
             required: 'Obrigatório',
             validate: (v) => isCepComplete(v) || 'CEP incompleto (8 dígitos)',
           }}
-          error={errors.cep}
+          error={endErrors.cep}
         />
         {fetching && (
           <span className="absolute right-3 top-7 flex items-center gap-1 text-xs text-slate-400">
@@ -80,12 +80,13 @@ export function AddressSection({ control, register, setValue, errors }: Props) {
         )}
       </div>
 
+      {/* UF */}
       <div>
         <label className="text-xs font-semibold uppercase tracking-wide text-slate-600">UF</label>
         <select
-          {...register('uf', { required: 'Obrigatório', validate: (v) => UF_LIST.includes(v) || 'UF inválida' })}
+          {...register('endereco.uf', { required: 'Obrigatório', validate: (v) => UF_LIST.includes(v) || 'UF inválida' })}
           className={`mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none transition
-            ${errors.uf
+            ${endErrors.uf
               ? 'border-rose-400 ring-2 ring-rose-200'
               : 'border-slate-300 bg-white focus:border-primary focus:ring-2 focus:ring-primary/20'
             }`}
@@ -93,32 +94,14 @@ export function AddressSection({ control, register, setValue, errors }: Props) {
           <option value="">Selecione…</option>
           {UF_LIST.map((uf) => <option key={uf} value={uf}>{uf}</option>)}
         </select>
-        {errors.uf && <small className="text-xs font-medium text-rose-600">{errors.uf.message}</small>}
+        {endErrors.uf && <small className="text-xs font-medium text-rose-600">{endErrors.uf.message}</small>}
       </div>
 
-      {/* Logradouro + Bairro */}
-      <FormInput
-        label="Logradouro"
-        registration={register('logradouro', { required: 'Obrigatório' })}
-        error={errors.logradouro}
-        placeholder="Preenchido automaticamente pelo CEP"
-      />
-      <FormInput
-        label="Bairro"
-        registration={register('bairro', { required: 'Obrigatório' })}
-        error={errors.bairro}
-        placeholder="Preenchido automaticamente pelo CEP"
-      />
-
-      {/* Cidade + Número + Complemento */}
-      <FormInput
-        label="Cidade"
-        registration={register('localidade', { required: 'Obrigatório' })}
-        error={errors.localidade}
-        placeholder="Preenchida automaticamente pelo CEP"
-      />
-      <FormInput label="Número" registration={register('numero')} error={errors.numero} placeholder="S/N" />
-      <FormInput label="Complemento" registration={register('complemento')} error={errors.complemento} placeholder="Opcional" />
+      <FormInput label="Logradouro" registration={register('endereco.logradouro', { required: 'Obrigatório' })} error={endErrors.logradouro} placeholder="Preenchido automaticamente pelo CEP" />
+      <FormInput label="Bairro"     registration={register('endereco.bairro',     { required: 'Obrigatório' })} error={endErrors.bairro}     placeholder="Preenchido automaticamente pelo CEP" />
+      <FormInput label="Cidade"     registration={register('endereco.localidade', { required: 'Obrigatório' })} error={endErrors.localidade} placeholder="Preenchida automaticamente pelo CEP" />
+      <FormInput label="Número"     registration={register('endereco.numero')}                                  error={endErrors.numero}     placeholder="S/N" />
+      <FormInput label="Complemento" registration={register('endereco.complemento')}                           error={endErrors.complemento} placeholder="Opcional" />
     </>
   );
 }

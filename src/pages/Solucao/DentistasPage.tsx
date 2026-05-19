@@ -29,7 +29,7 @@ export function DentistasPage() {
   const onCancel = () => { setEditing(null); reset({}); };
 
   const save = async (values: any) => {
-    const payload = { ...values, cpf: digits(values.cpf ?? ''), cep: digits(values.cep ?? ''), telefone: digits(values.telefone ?? '') };
+    const payload = { ...values, cpf: digits(values.cpf ?? ''), telefone: digits(values.telefone ?? ''), endereco: { ...values.endereco, cep: digits(values.endereco?.cep ?? '') } };
     if (editing?.id) {
       const updated = await dentistaService.atualizar(editing.id, { ...editing, ...payload });
       setList((p) => p.map((x) => x.id === editing.id ? updated : x));
@@ -83,7 +83,7 @@ export function DentistasPage() {
             <li key={d.id} className="flex items-center justify-between rounded-xl border bg-white p-4 text-sm shadow-sm">
               <div>
                 <p className="font-semibold">{d.nome}</p>
-                <p className="text-xs text-slate-500">{d.cro} · {maskCpf(d.cpf)} · {d.email} · {d.localidade}/{d.uf}</p>
+                <p className="text-xs text-slate-500">{d.cro} · {maskCpf(d.cpf)} · {d.email} · {d.endereco?.localidade}/{d.endereco?.uf}</p>
               </div>
               <div className="flex gap-2">
                 <button onClick={() => onEdit(d)} className="rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white">Editar</button>

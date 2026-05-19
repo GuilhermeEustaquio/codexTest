@@ -29,7 +29,7 @@ export function DoadoresPage() {
   const onCancel = () => { setEditing(null); reset({}); };
 
   const save = async (values: any) => {
-    const payload = { ...values, documanto: digits(values.documanto ?? ''), cep: digits(values.cep ?? ''), telefone: digits(values.telefone ?? '') };
+    const payload = { ...values, documento: digits(values.documento ?? ''), telefone: digits(values.telefone ?? ''), endereco: { ...values.endereco, cep: digits(values.endereco?.cep ?? '') } };
     if (editing?.id) {
       const updated = await doadorService.atualizar(editing.id, { ...editing, ...payload });
       setList((p) => p.map((x) => x.id === editing.id ? updated : x));
@@ -55,9 +55,9 @@ export function DoadoresPage() {
       <form onSubmit={handleSubmit(save)} className="grid gap-3 rounded-2xl border bg-white p-5 md:grid-cols-2">
         <h2 className="md:col-span-2 font-semibold text-slate-700">{editing ? 'Editar doador' : 'Novo doador'}</h2>
         <FormInput label="Nome / Razão social" registration={register('nome', { required: 'Obrigatório' })} error={errors.nome} disabled={!!editing} />
-        <MaskedInput label="CPF / CNPJ" name="documanto" control={control} mask={maskCpfCnpj} disabled={!!editing}
+        <MaskedInput label="CPF / CNPJ" name="documento" control={control} mask={maskCpfCnpj} disabled={!!editing}
           placeholder="000.000.000-00 ou 00.000.000/0000-00"
-          rules={{ required: 'Obrigatório', validate: (v) => isCpfCnpjComplete(v) || 'CPF ou CNPJ incompleto' }} error={errors.documanto} />
+          rules={{ required: 'Obrigatório', validate: (v) => isCpfCnpjComplete(v) || 'CPF ou CNPJ incompleto' }} error={errors.documento} />
         <FormInput label="Data de nascimento / fundação" type="date" registration={register('dtNasc', { required: 'Obrigatório' })} error={errors.dtNasc} />
         <MaskedInput label="Telefone" name="telefone" control={control} mask={maskPhone}
           placeholder="(00) 00000-0000"
@@ -80,7 +80,7 @@ export function DoadoresPage() {
             <li key={d.id} className="flex items-center justify-between rounded-xl border bg-white p-4 text-sm shadow-sm">
               <div>
                 <p className="font-semibold">{d.nome}</p>
-                <p className="text-xs text-slate-500">{maskCpfCnpj(d.documanto)} · {d.email} · {d.localidade}/{d.uf}</p>
+                <p className="text-xs text-slate-500">{maskCpfCnpj(d.documento)} · {d.email} · {d.endereco?.localidade}/{d.endereco?.uf}</p>
               </div>
               <div className="flex gap-2">
                 <button onClick={() => onEdit(d)} className="rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white">Editar</button>
